@@ -3,7 +3,8 @@
 
 #define LAND 0
 #define SEA 1
-#define ANY 2
+#define RAIL 3
+#define ANY 4
 #define NUM_TRANSPORT 2
 
 
