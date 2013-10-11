@@ -18,15 +18,10 @@ struct hunterView {
     // ===== We're gonna be parsing the history string to get score, cur
     // rentTurn and round anyway. Could
     // ===== be easier to also extract the info below and store it.
-<<<<<<< HEAD
     // - array of player healths (inc. Drac). (Maybe be easier to do in 
     // the function getHealth, may not be.)
     // - array of player locations (inc. Drac).
     // - array of array's of player past 6 turn trails (inc. Drac)
-=======
-    // - array of player healths (inc. Drac). (Maybe be easier to do in the function getHealth, may not be.)
-    // - array of array's of player past 6 locations (inc. Drac)
->>>>>>> 6c594e947edd4ee01529e6c4d4d764ba2eebac81
     int hello;
 };
      
