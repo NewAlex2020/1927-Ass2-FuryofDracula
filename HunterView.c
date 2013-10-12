@@ -86,7 +86,11 @@ PlayerID getCurrentPlayer (HunterView currentView) {
 //Get the current score
 // Returns a positive integer [0...366]
 int getScore(HunterView currentView) { 
-
+    // game starts at 366
+    // dracula finishes a turn => -1 == - SCORE_LOSS_DRACULA_TURN
+    // hunter teleported to hospital => -6 == - SCORE_LOSS_HUNTER_HOSPITAL
+    // vampire matures (dracula's 'V' action)
+    //     => -13 == - SCORE_LOSS_VAMPIRE_MATURES
 }
 
 //Get the current health points for a given player
@@ -95,7 +99,20 @@ int getScore(HunterView currentView) {
 // )
 
 int getHealth(HunterView currentView, PlayerID player) {
-
+    // DRACULA:
+    // dracula starts at 40 hp == GAME_START_BLOOD_POINTS
+    // encounter hunter => -10hp ***** == LIFE_LOSS_HUNTER_ENCOUNTER
+    // every turn Dracula is at sea => -2 HP == LIFE_LOSS_SEA
+    // @ castle dracula at end of turn && not defeated => +10 hp
+    //     == LIFE_GAIN_CASTLE_DRACULA
+    // dracula's hp is NOT capped
+    // HUNTERS:
+    // start at 9hp == GAME_START_HUNTER_LIFE_POINTS
+    // encounters trap => -2hp == LIFE_LOSS_TRAP_ENCOUNTER
+    // encounters dracula => -4hp ***** == LIFE_LOSS_DRACULA_ENCOUNTER
+    // end turn in same city as their previous turn => +3hp == LIFE_GAIN_REST
+    // hp capped at 9hp
+    // check *****, not sure if it depends on who enters the city
 
 }
 
