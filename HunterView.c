@@ -53,10 +53,8 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
 }
      
      
-// this function frees all memory previously allocated for the Hunte
-     
-     
-// rView
+// this function frees all memory previously allocated for the    
+// HunterView
 // toBeDeleted. toBeDeleted should not be accessed after the call.
 void disposeHunterView( HunterView toBeDeleted ) {
     //COMPLETE THIS IMPLEMENTATION
@@ -65,8 +63,6 @@ void disposeHunterView( HunterView toBeDeleted ) {
 
 
 //Functions to return simple information about the current state of 
-
-
 // the game
 
 //Get the current round
@@ -120,10 +116,10 @@ int getHealth(HunterView currentView, PlayerID player) {
 //   CITY_UNKNOWN     if Dracula was in an unknown city
 //   SEA_UNKNOWN      if Dracula was in an unknown sea
 //   HIDE             if Dracula was known to have made a hide move
-//   DOUBLE_BACK_N    where N is [0...5], if Dracula was known to ha
-// ve 
-//                    made a double back move N positions back in th
-// e trail
+//   DOUBLE_BACK_N    where N is [0...5], if Dracula was known to 
+// have 
+//                    made a double back move N positions back in 
+// the trail
 //                    e.g. DOUBLE_BACK_1 is the last place place he 
 // visited
 //   TELEPORT         if Dracula apparated back to Castle Dracula
