@@ -9,6 +9,8 @@
 #include <ctype.h>
 
 // our local #defines
+#define TRUE     1
+#define FALSE    0
 #define LEN_PLAY 7
 #define PLAYERS {'G', 'S', 'H', 'M', 'D'}
 #define LOCATION_CODES {
@@ -21,13 +23,15 @@
     "ZU",
     "NS", "EC", "IS", "AO", "BB", "MS", "TS", "IO", "AS", "BS"
 }
-#define TRAP_ENCOUNTER_CODE    'T'
-#define IMMATURE_VAMPIRE_CODE  'V'
-#define DRACULA_ENCOUNTER_CODE 'D'
+#define TRAP_ENCOUNTER_CODE     'T'
+#define IMMATURE_ENCOUNTER_CODE 'V'
+#define DRACULA_ENCOUNTER_CODE  'D'
 // last line [61-70] are seas, the rest [0-60] are cities
 
 // our local static functions
 static void makePlaysArray(char *pastPlays, int n, char *array[LEN_PLAY+1]);
+static int playerIndex(char letter);
+static int locationIndex(char string[2]);
      
 struct hunterView {
     // OH GOD WE NEED TO WRITE THIS OH GOD, WE DON'T HAVE MUCH TIME.
@@ -115,13 +119,33 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
     hunterView->health[PLAYER_DRACULA] = GAME_START_BLOOD_POINTS;
 
     int currTurn;
+    int diedThisTurn = FALSE;
+    PlayerID currPlayer;
     for (currTurn = 0; currTurn < numPlays; currTurn++) {
         strcpy (currentPlay, playsArray[currTurn]);
+        currPlayer = playerIndex(currentPlay[0]);
         int strIndex = 3; // start of the actions
         // each turn consists of moving location, then doing an action
 
         // now to process the actions
-        while ()
+        while (diedThisTurn == FALSE && strIndex < LEN_PLAY
+               && currentPlay[strIndex] != '.') {
+            if (currentPlay[strIndex] == TRAP_ENCOUNTER_CODE) {
+                hunterView->health[currPlayer] -= LIFE_LOSS_TRAP_ENCOUNTER;
+            } else if (currentPlay[strIndex] == IMMATURE_ENCOUNTER_CODE) {
+                // pass
+            } else if (currentPlay[strIndex] == DRACULA_ENCOUNTER_CODE) {
+                // omemergerhd I touched Dracula
+                hunterView->health[currPlayer] -= LIFE_LOSS_DRACULA_ENCOUNTER;
+                hunterView->health[PLAYER_DRACULA] -= LIFE_LOSS_HUNTER_ENCOUNTER;
+            }
+            if (hunterView->health[currPlayer] <= 0) {
+                diedThisTurn = TRUE;
+                hunterView->health[currPlayer] == 0;
+                // TODO - location becomes the hospital
+            }
+            strIndex++;
+        }
     }
 
 
@@ -294,4 +318,24 @@ static void makePlaysArray(char *pastPlays, int n, char *array[8]) {
     for (i = 0; i < n; i++) {
         fscanf(pastPlays, "%s ", &array[i]);
     }
+}
+
+static int playerIndex(char letter) {
+    int i;
+    for (i = 0; i < NUM_PLAYERS; i++) {
+        if (letter == PLAYERS[i]) {
+            return i;
+        }
+    }
+    assert("Well, crap son\n" == 42);
+}
+
+static int locationIndex(char *string) {
+    int i;
+    for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
+        if (strcmp(string, 2, LOCATION_CODES[i]) == 0) {
+            return i;
+        }
+    }
+    assert("Well, that ain't a recognisable string" == 42);
 }
