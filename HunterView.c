@@ -3,6 +3,31 @@
 #include "game.h"
 #include "HunterView.h"
 #include "Graph.h"
+
+// our #includes
+#include <string.h>
+#include <ctype.h>
+
+// our local #defines
+#define LEN_PLAY 7
+#define PLAYERS {'G', 'S', 'H', 'M', 'D'}
+#define LOCATION_CODES {
+    "AL", "AM", "AT", "BA", "BI", "BE", "BR", "BO", "BU", "BC",
+    "BD", "CA", "CG", "CD", "CF", "CO", "CN", "DU", "ED", "FL",
+    "FR", "GA", "GW", "GE", "GO", "GR", "HA", "JM", "KL", "LE",
+    "LI", "LS", "LV", "LO", "MA", "MN", "MR", "MI", "MU", "NA",
+    "NP", "NU", "PA", "PL", "PR", "RO", "SA", "SN", "SR", "SJ",
+    "SO", "ST", "SW", "SZ", "TO", "VA", "VR", "VE", "VI", "ZA",
+    "ZU",
+    "NS", "EC", "IS", "AO", "BB", "MS", "TS", "IO", "AS", "BS"
+}
+#define TRAP_ENCOUNTER_CODE    'T'
+#define IMMATURE_VAMPIRE_CODE  'V'
+#define DRACULA_ENCOUNTER_CODE 'D'
+// last line [61-70] are seas, the rest [0-60] are cities
+
+// our local static functions
+static void makePlaysArray(char *pastPlays, int n, char *array[LEN_PLAY+1]);
      
 struct hunterView {
     // OH GOD WE NEED TO WRITE THIS OH GOD, WE DON'T HAVE MUCH TIME.
@@ -22,7 +47,13 @@ struct hunterView {
     // the function getHealth, may not be.)
     // - array of player locations (inc. Drac).
     // - array of array's of player past 6 turn trails (inc. Drac)
-    int hello;
+
+    // ** If we're doing everything iteratively, perhaps:
+    int health[NUM_PLAYERS]; // initialise appropriately
+    // some loop for parsing, assume i is the looping variable
+
+    // The data format for player plays is actually retarded, have to
+    // account for different events not being there, oh well.
 };
      
 // newHunterView creates a new hunter view to summarise the current 
@@ -50,6 +81,55 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
     HunterView hunterView = malloc( sizeof( struct hunterView ) );
     hunterView->hello = 42;
     return hunterView;
+
+    // ** How's the parsing being done? Will we just shove each
+    // ** 'play' string into an array of strings? Such as:
+    // char playStrings[SOME_CONSTANT][8];
+    // char *playStrings[8] = malloc()
+
+    int numPlays = 0;
+    int i = 0;
+    char temp = pastPlays[i];
+    while (temp != EOF && temp != '\0') {
+        temp = pastPlays[i];
+        if (temp == ' ') {
+            numPlays++;
+        }
+        i++;
+    }
+    // random code found on the internet for 2d array
+    char ** playsArray;
+    playsArray = (char **) malloc(numPlays * sizeof(char *));
+    for (i = 0; i < numPlays; i++) {
+        playsArray[i] = (char *) malloc((LEN_PLAY + 1) * sizeof(char));
+    }
+    makePlaysArray(pastPlays, numPlays, playsArray);
+
+
+    // BEGIN THE GREAT LOOP OF PROCESSING SHIT.
+    // before the game starts, initiate health
+    char currentPlay[LEN_PLAY + 1];
+    for (i = 0; i < NUM_PLAYERS - 1; i++) {
+        hunterView->health[i] = GAME_START_HUNTER_LIFE_POINTS;
+    }
+    hunterView->health[PLAYER_DRACULA] = GAME_START_BLOOD_POINTS;
+
+    int currTurn;
+    for (currTurn = 0; currTurn < numPlays; currTurn++) {
+        strcpy (currentPlay, playsArray[currTurn]);
+        int strIndex = 3; // start of the actions
+        // each turn consists of moving location, then doing an action
+
+        // now to process the actions
+        while ()
+    }
+
+
+    // free random shit
+    for (i = 0; i < numPlays; i++) {
+        free(playsArray[i]);
+    }
+    free(playsArray);
 }
      
      
@@ -208,3 +288,10 @@ LocationID * connectedLocations(HunterView currentView, int * numLocations, Loca
 
 }
 
+static void makePlaysArray(char *pastPlays, int n, char *array[8]) {
+    // n is the number of plays in the string
+    int i;
+    for (i = 0; i < n; i++) {
+        fscanf(pastPlays, "%s ", &array[i]);
+    }
+}
