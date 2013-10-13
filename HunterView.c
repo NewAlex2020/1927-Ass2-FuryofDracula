@@ -26,6 +26,10 @@
 #define TRAP_ENCOUNTER_CODE     'T'
 #define IMMATURE_ENCOUNTER_CODE 'V'
 #define DRACULA_ENCOUNTER_CODE  'D'
+#define TRAP_PLACED_CODE     'T'
+#define IMMATURE_PLACED_CODE 'V'
+#define TRAP_LEAVES_CODE     'M'
+#define VAMPIRE_MATURES_CODE 'V'
 // last line [61-70] are seas, the rest [0-60] are cities
 
 // our local static functions
@@ -117,6 +121,7 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
         hunterView->health[i] = GAME_START_HUNTER_LIFE_POINTS;
     }
     hunterView->health[PLAYER_DRACULA] = GAME_START_BLOOD_POINTS;
+    hunterView->score = GAME_START_SCORE
 
     int currTurn;
     int diedThisTurn = FALSE;
@@ -128,23 +133,55 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
         // each turn consists of moving location, then doing an action
 
         // now to process the actions
-        while (diedThisTurn == FALSE && strIndex < LEN_PLAY
-               && currentPlay[strIndex] != '.') {
-            if (currentPlay[strIndex] == TRAP_ENCOUNTER_CODE) {
-                hunterView->health[currPlayer] -= LIFE_LOSS_TRAP_ENCOUNTER;
-            } else if (currentPlay[strIndex] == IMMATURE_ENCOUNTER_CODE) {
-                // pass
-            } else if (currentPlay[strIndex] == DRACULA_ENCOUNTER_CODE) {
-                // omemergerhd I touched Dracula
-                hunterView->health[currPlayer] -= LIFE_LOSS_DRACULA_ENCOUNTER;
-                hunterView->health[PLAYER_DRACULA] -= LIFE_LOSS_HUNTER_ENCOUNTER;
+        if (currPlayer != PLAYER_DRACULA) {
+            while (diedThisTurn == FALSE && strIndex < LEN_PLAY
+                   && currentPlay[strIndex] != '.') {
+                if (currentPlay[strIndex] == TRAP_ENCOUNTER_CODE) {
+                    hunterView->health[currPlayer] -= LIFE_LOSS_TRAP_ENCOUNTER;
+                } else if (currentPlay[strIndex] == IMMATURE_ENCOUNTER_CODE) {
+                    // pass
+                } else if (currentPlay[strIndex] == DRACULA_ENCOUNTER_CODE) {
+                    // omemergerhd I touched Dracula
+                    hunterView->health[currPlayer] -= LIFE_LOSS_DRACULA_ENCOUNTER;
+                    hunterView->health[PLAYER_DRACULA] -= LIFE_LOSS_HUNTER_ENCOUNTER;
+                }
+                if (hunterView->health[currPlayer] <= 0) {
+                    diedThisTurn = TRUE;
+                    hunterView->health[currPlayer] == 0;
+                    // TODO - location becomes the hospital
+                    hunterView->score -= SCORE_LOSS_HUNTER_HOSPITAL;
+                }
+                if (hunterView->health[DRACULA] <= 0) {
+                    // GAME OVER MATE
+                }
+                strIndex++;
             }
+            // end of player's turn TODO
+
+        } else { // omegherd dracula's turn
+            // TODO - action's for dracula, besides placing
+            // down his encounters
+            if (currentPlay[3] == TRAP_PLACED_CODE) {
+                // nothing?
+            }
+            if (currentPlay[4] == IMMATURE_PLACED_CODE) {
+                // nothing?
+            }
+            // action code for dracula
+            if (currentPlay[5] == TRAP_LEAVES_CODE) {
+                // nothing?
+            } else if (currentPlay[5] == VAMPIRE_MATURES_CODE) {
+                hunterView->score -= SCORE_LOSS_VAMPIRE_MATURES;
+            } else {
+                // nothing, currentPlay[5] == '.'
+            }
+            // end of turn, TODO check for dead vampire
             if (hunterView->health[currPlayer] <= 0) {
-                diedThisTurn = TRUE;
-                hunterView->health[currPlayer] == 0;
-                // TODO - location becomes the hospital
+                // you just won the game
+            } else {
+                // life goes on hunting
+                hunterView->score -= SCORE_LOSS_DRACULA_TURN;
             }
-            strIndex++;
         }
     }
 
