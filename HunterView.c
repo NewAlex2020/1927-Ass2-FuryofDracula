@@ -25,6 +25,7 @@
     "NS", "EC", "IS", "AO", "BB", "MS", "TS", "IO", "AS", "BS", \
     "C?", "S?", "HI", "D1", "D2", "D3", "D4", "D5", "TP"        \
 }
+// last line [61-70] are seas, the rest [0-60] are cities
 #define TRAP_ENCOUNTER_CODE     'T'
 #define IMMATURE_ENCOUNTER_CODE 'V'
 #define DRACULA_ENCOUNTER_CODE  'D'
@@ -32,7 +33,7 @@
 #define IMMATURE_PLACED_CODE 'V'
 #define TRAP_LEAVES_CODE     'M'
 #define VAMPIRE_MATURES_CODE 'V'
-// last line [61-70] are seas, the rest [0-60] are cities
+
 
 // our local static functions
 static void makePlaysArray(char *pastPlays, int n, char *array[LEN_PLAY+1]);
@@ -125,6 +126,10 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
     }
     hunterView->health[PLAYER_DRACULA] = GAME_START_BLOOD_POINTS;
     hunterView->score = GAME_START_SCORE;
+    // initialise location to unknown location
+    for (i = 0; i < NUM_PLAYERS; i++) {
+        pushCus(hunterView, i, UNKNOWN_LOCATION);
+    }
 
     int currTurn;
     int diedThisTurn = FALSE;
@@ -135,7 +140,8 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
 
         char locationString[3] = {currentPlay[1],currentPlay[2],'\0'}; 
         LocationID currLocation = locationIndex(locationString);
-        pushCus(hunterView, currPlayer, currLocation);
+        // pushCus(hunterView, currPlayer, currLocation);
+        // could be wrong: what if they die this turn?
 
         int strIndex = 3; // start of the actions
         // each turn consists of moving location, then doing an action
@@ -158,6 +164,11 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
                     hunterView->health[currPlayer] = 0;
                     // TODO - location becomes the hospital
                     hunterView->score -= SCORE_LOSS_HUNTER_HOSPITAL;
+                    // unsure about this
+                    pushCus(hunterView, currPlayer, ST_JOSEPH_AND_ST_MARYS);
+                } else {
+                    // didn't die this turn
+                    pushCus(hunterView, currPlayer, currLocation);
                 }
                 if (hunterView->health[PLAYER_DRACULA] <= 0) {
                     // GAME OVER MATE
@@ -165,6 +176,14 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
                 strIndex++;
             }
             // end of player's turn TODO
+            // we have already established the player's end location
+            if (hunterView->locations[currPlayer][0] ==
+                hunterView->locations[currPlayer][1]) {
+                hunterView->health[currPlayer] += LIFE_GAIN_REST;
+            }
+            if (hunterView->health[currPlayer] > GAME_START_HUNTER_LIFE_POINTS) {
+                hunterView->health[currPlayer] = GAME_START_HUNTER_LIFE_POINTS;
+            }
 
         } else { // omegherd dracula's turn
             // TODO - action's for dracula, besides placing
@@ -381,11 +400,15 @@ static int playerIndex(char letter) {
 
 static int locationIndex(char *string) {
     int i;
-    for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
-        if (strcmp(string, 2, LOCATION_CODES[i]) == 0) {
+    for (i = 0; i < NUM_LOCATIONS; i++) {
+        // changed this from NUM_MAP_LOCATIONS
+        if (strcmp(string, LOCATION_CODES[i]) == 0) {
+            // modified this to be correct, we now assume that
+            // string is exactly 2 characters + '\0'
             return i;
         }
     }
+    return UNKNOWN_LOCATION; // could be useful
     assert("Well, that ain't a recognisable string" == 42);
 }
 
