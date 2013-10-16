@@ -10,8 +10,8 @@
 #include <ctype.h>
 
 // our local #defines
-#define TRUE     1
-#define FALSE    0
+#define TRUE     (1 == 1) // CHANGED FROM JUST 1
+#define FALSE    (1 == 0)
 #define LEN_PLAY 7
 #define PLAYERS {'G', 'S', 'H', 'M', 'D'}
 #define LOCATION_CODES { \
@@ -26,7 +26,13 @@
     "C?", "S?", "HI", "D1", "D2", "D3", "D4", "D5", "TP"        \
 }
 // penultimate line [61-70] are seas, the rest [0-60] are cities,
-// ;ast line [71-79] are other locations, UNKNOWN == -1
+// last line [71-79] are other locations, UNKNOWN == -1
+#define SEA_LOCATION_CODES { \
+    NORTH_SEA, ENGLISH_CHANNEL, IRISH_SEA, ATLANTIC_OCEAN, \
+    BAY_OF_BISCAY, MEDITERRANEAN_SEA, TYRRHENIAN_SEA, IONIAN_SEA, \
+    ADRIATIC_SEA, BLACK_SEA \
+}
+#define NUM_SEA_LOCATIONS 10
 #define TRAP_ENCOUNTER_CODE     'T'
 #define IMMATURE_ENCOUNTER_CODE 'V'
 #define DRACULA_ENCOUNTER_CODE  'D'
@@ -41,6 +47,7 @@ static void makePlaysArray(char *pastPlays, int n, char *array[LEN_PLAY+1]);
 static int playerIndex(char letter);
 static int locationIndex(char string[2]);
 static void pushCus(HunterView current, PlayerID player, LocationID location);
+static int isSeaLocation(LocationID location);
 
 
 struct hunterView {
@@ -65,7 +72,11 @@ struct hunterView {
     // the function getHealth, may not be.)
     // - array of player locations (inc. Drac).
     // - array of array's of player past 6 turn trails (inc. Drac)
+
     int locations[NUM_PLAYERS][TRAIL_SIZE];
+    // TODO - in the case of Dracula, is this sufficient in terms of
+    // the 
+
     // ** If we're doing everything iteratively, perhaps:
     int health[NUM_PLAYERS]; // initialise appropriately
     // some loop for parsing, assume i is the looping variable
@@ -104,6 +115,7 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
     // char playStrings[SOME_CONSTANT][8];
     // char *playStrings[8] = malloc()
 
+    // counting how many plays are in the string.
     int numPlays = 0;
     int i = 0;
     char temp = pastPlays[i];
@@ -125,7 +137,6 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
 
     // BEGIN THE GREAT LOOP OF PROCESSING SHIT.
     // before the game starts, initiate health
-    char currentPlay[LEN_PLAY + 1];
     for (i = 0; i < NUM_PLAYERS - 1; i++) {
         hunterView->health[i] = GAME_START_HUNTER_LIFE_POINTS;
     }
@@ -136,9 +147,11 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
         pushCus(hunterView, i, UNKNOWN_LOCATION);
     }
 
+    char currentPlay[LEN_PLAY + 1];
     int currTurn; // DO NOT CONFUSE WITH currTurn from hunterView
     int diedThisTurn = FALSE;
     PlayerID currPlayer;
+
     for (currTurn = 0; currTurn < numPlays; currTurn++) {
         strcpy (currentPlay, playsArray[currTurn]);
         currPlayer = playerIndex(currentPlay[0]);
@@ -147,12 +160,12 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
         LocationID currLocation = locationIndex(locationString);
         // pushCus(hunterView, currPlayer, currLocation);
         // could be wrong: what if they die this turn?
-
-        int strIndex = 3; // start of the actions
+        
         // each turn consists of moving location, then doing an action
 
         // now to process the actions
         if (currPlayer != PLAYER_DRACULA) {
+            int strIndex = 3; // start of the actions
             while (diedThisTurn == FALSE && strIndex < LEN_PLAY
                    && currentPlay[strIndex] != '.') {
                 if (currentPlay[strIndex] == TRAP_ENCOUNTER_CODE) {
@@ -209,14 +222,25 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
                 // nothing, currentPlay[5] == '.'
             }
             // end of turn, TODO check for dead vampire
+
             if (hunterView->health[currPlayer] <= 0) {
                 // you just won the game
             } else {
                 // life goes on hunting
+                pushCus(hunterView, currPlayer, currLocation);
+                // sea hp loss is processed post-action
+                if (currLocation == SEA_UNKNOWN || isSeaLocation(currLocation)) {
+                    hunterView->health[PLAYER_DRACULA] -= LIFE_LOSS_SEA;
+                } else if (currLocation == CASTLE_DRACULA) {
+                    hunterView->health[PLAYER_DRACULA] += LIFE_GAIN_CASTLE_DRACULA;
+                }
                 hunterView->score -= SCORE_LOSS_DRACULA_TURN;
             }
         }
     }
+
+    // we've gone through all the plays now. Time for some checking
+    assert(numPlays - 1 == hunterView->currTurn);
 
 
     // free random shit
@@ -428,4 +452,15 @@ static void pushCus(HunterView current, PlayerID player, LocationID location) {
     }
     current->locations[player][0] = location;
 
+}
+
+static int isSeaLocation (LocationID location) {
+    // used for reducing vampire health
+    int i;
+    for (i = 0; i < NUM_SEA_LOCATIONS; i++) {
+        if (location == SEA_LOCATION_CODES[i]) {
+            return TRUE;
+        }
+    }
+    return FALSE;
 }
