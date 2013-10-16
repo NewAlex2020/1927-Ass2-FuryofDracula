@@ -509,11 +509,55 @@ LocationID * connectedLocations(HunterView currentView,
 
     // Rail!
     if (rail) {
-        int i;
-        for (i=0; i<NUM_MAP_LOCATIONS; i++) {
-            if (isAdjacent(currentView->board, from, i, RAIL)) {
-                connected[count] = i;
-                count++;
+        if ((round + player) % 4 == 1) {
+            // one city
+            int i;
+            for (i=0; i<NUM_MAP_LOCATIONS; i++) {
+                if (isAdjacent(currentView->board, from, i, RAIL)) {
+                    connected[count] = i;
+                    count++;
+                }
+            }
+        } else if ((round + player) % 4 == 2) {
+            // two cities
+            int i;
+            for (i=0; i<NUM_MAP_LOCATIONS; i++) {
+                if (isAdjacent(currentView->board, from, i, RAIL)) {
+                    connected[count] = i;
+                    count++;
+
+                    int j;
+                    for (j=0; j<NUM_MAP_LOCATIONS; j++) {
+                        if (isAdjacent(currentView->board, i, j, RAIL)) {
+                            connected[count] = j;
+                            count++;
+                        }
+                    }
+                }
+            }
+        } else if ((round + player) % 4 == 3) {
+            // three cities
+            int i;
+            for (i=0; i<NUM_MAP_LOCATIONS; i++) {
+                if (isAdjacent(currentView->board, from, i, RAIL)) {
+                    connected[count] = i;
+                    count++;
+                    
+                    int j;
+                    for (j=0; j<NUM_MAP_LOCATIONS; j++) {
+                        if (isAdjacent(currentView->board, i, j, RAIL)) {
+                            connected[count] = j;
+                            count++;
+                            int k;
+                            for (k=0; k<NUM_MAP_LOCATIONS; k++) {
+                                if (isAdjacent(currentView->board, j, k, RAIL)) {
+                                    connected[count] = k;
+                                    count++;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
