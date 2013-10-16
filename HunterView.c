@@ -25,7 +25,8 @@
     "NS", "EC", "IS", "AO", "BB", "MS", "TS", "IO", "AS", "BS", \
     "C?", "S?", "HI", "D1", "D2", "D3", "D4", "D5", "TP"        \
 }
-// last line [61-70] are seas, the rest [0-60] are cities
+// penultimate line [61-70] are seas, the rest [0-60] are cities,
+// ;ast line [71-79] are other locations, UNKNOWN == -1
 #define TRAP_ENCOUNTER_CODE     'T'
 #define IMMATURE_ENCOUNTER_CODE 'V'
 #define DRACULA_ENCOUNTER_CODE  'D'
@@ -46,9 +47,13 @@ struct hunterView {
     // OH GOD WE NEED TO WRITE THIS OH GOD, WE DON'T HAVE MUCH TIME.
     // Stuff it'll need.
     Graph *board; // Board representation.
-    PlayerID currentTurn;
+    // PlayerID currentTurn; // don't confuse with int currTurn
+    //                       // from newHunterView
+    int currentTurn; // from 0 to N - derive player and round from this
+    int curr;
     int score;
-    Round roundNum;
+    // Round roundNum;
+
     // ===== We can do these three in the newHunterView func at creation
     // . Or jsut store the history String
     // ===== and do it when the respective functions are called. Depends
@@ -131,7 +136,7 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
         pushCus(hunterView, i, UNKNOWN_LOCATION);
     }
 
-    int currTurn;
+    int currTurn; // DO NOT CONFUSE WITH currTurn from hunterView
     int diedThisTurn = FALSE;
     PlayerID currPlayer;
     for (currTurn = 0; currTurn < numPlays; currTurn++) {
@@ -186,6 +191,7 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
             }
 
         } else { // omegherd dracula's turn
+            assert(currPlayer == PLAYER_DRACULA);
             // TODO - action's for dracula, besides placing
             // down his encounters
             if (currentPlay[3] == TRAP_PLACED_CODE) {
@@ -237,7 +243,8 @@ void disposeHunterView( HunterView toBeDeleted ) {
 
 // Get the current round
 Round getRound (HunterView currentView) {
-    return currentView->roundNum;
+    // return currentView->roundNum;
+    return currentView->currentTurn / NUM_PLAYERS;
 }
 
 // Get the id of current player - ie whose turn is it?
@@ -248,7 +255,8 @@ Round getRound (HunterView currentView) {
 //   MINA_HARKER    (3): Mina Harker's turn
 //   DRACULA        (4): Dracula's turn
 PlayerID getCurrentPlayer (HunterView currentView) {
-    return currentView->currentTurn;
+    // return currentView->currentTurn;
+    return currentView->currentTurn % NUM_PLAYERS;
 }
 
 // Get the current score
