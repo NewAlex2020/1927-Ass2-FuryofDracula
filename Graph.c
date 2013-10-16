@@ -1,6 +1,8 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "game.h"
+#include "HunterView.h"
 #include "Graph.h"
 #include "cities.h"
 

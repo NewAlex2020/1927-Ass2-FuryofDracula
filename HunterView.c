@@ -28,9 +28,9 @@ const char* locationCodes[] = { \
 const char seaLocationCodes[] = { \
     NORTH_SEA, ENGLISH_CHANNEL, IRISH_SEA, ATLANTIC_OCEAN,        \
     BAY_OF_BISCAY, MEDITERRANEAN_SEA, TYRRHENIAN_SEA, IONIAN_SEA, \
-    ADRIATIC_SEA, BLACK_SEA \
+    ADRIATIC_SEA, BLACK_SEA, SEA_UNKNOWN\
 };
-#define NUM_SEA_LOCATIONS 10 // not including SEA_UNKNOWN
+#define NUM_SEA_LOCATIONS 11 // now including SEA_UNKNOWN
 #define TRAP_ENCOUNTER_CODE     'T'
 #define IMMATURE_ENCOUNTER_CODE 'V'
 #define DRACULA_ENCOUNTER_CODE  'D'
@@ -55,7 +55,7 @@ int draculaMeetsHunter(HunterView current);
 struct hunterView {
     // OH GOD WE NEED TO WRITE THIS OH GOD, WE DON'T HAVE MUCH TIME.
     // Stuff it'll need.
-    Graph *board; // Board representation.
+    Graph board; // Board representation.
     // PlayerID currentTurn; // don't confuse with int currTurn
     //                       // from newHunterView
     int currentTurn; // from 0 to N - derive player and round from this
@@ -280,13 +280,7 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
                     LocationID history[TRAIL_SIZE];
                     getHistory(hunterView, currPlayer, history);
 
-                    int j, currIndex;
-                    for (j = 0; j < TRAIL_SIZE; j++) {
-                        if (history[j] == currLocation) {
-                            currIndex = j;
-                        }
-                    }
-                    if (currIndex != 0 && isSeaLocation(history[j - 1])) {
+                    if (isSeaLocation(history[1])) {
                         hunterView->health[PLAYER_DRACULA] -= LIFE_LOSS_SEA;
                     }
                 }
