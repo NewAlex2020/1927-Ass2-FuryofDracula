@@ -55,7 +55,7 @@ int draculaMeetsHunter(HunterView current);
 struct hunterView {
     // OH GOD WE NEED TO WRITE THIS OH GOD, WE DON'T HAVE MUCH TIME.
     // Stuff it'll need.
-    Graph *board; // Board representation.
+    Graph board; // Board representation.
     // PlayerID currentTurn; // don't confuse with int currTurn
     //                       // from newHunterView
     int currentTurn; // from 0 to N - derive player and round from this
