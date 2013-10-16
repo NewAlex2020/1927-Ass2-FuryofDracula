@@ -293,6 +293,8 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
 // toBeDeleted. toBeDeleted should not be accessed after the call.
 void disposeHunterView( HunterView toBeDeleted ) {
     // COMPLETE THIS IMPLEMENTATION
+    // free(toBeDeleted->)
+    destroyGraph(toBeDeleted->board);
     free( toBeDeleted );
 }
 
