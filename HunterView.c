@@ -22,7 +22,8 @@
     "NP", "NU", "PA", "PL", "PR", "RO", "SA", "SN", "SR", "SJ", \
     "SO", "ST", "SW", "SZ", "TO", "VA", "VR", "VE", "VI", "ZA", \
     "ZU", \
-    "NS", "EC", "IS", "AO", "BB", "MS", "TS", "IO", "AS", "BS" \
+    "NS", "EC", "IS", "AO", "BB", "MS", "TS", "IO", "AS", "BS", \
+    "C?", "S?", "HI", "D1", "D2", "D3", "D4", "D5", "TP"        \
 }
 #define TRAP_ENCOUNTER_CODE     'T'
 #define IMMATURE_ENCOUNTER_CODE 'V'
