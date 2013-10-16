@@ -41,14 +41,14 @@
 
 
 // our local static functions
-static void makePlaysArray(char *pastPlays, int n, char *array[LEN_PLAY+1]);
-static int playerIndex(char letter);
-static int locationIndex(char string[2]);
-static void pushCus(HunterView current, PlayerID player, LocationID location);
-static int isSeaLocation(LocationID location);
-static int playerIsDead(HunterView current, PlayerID player);
-static int scoreIsZero(HunterView current);
-static int draculaMeetsHunter(HunterView current);
+void makePlaysArray(char *pastPlays, int n, char *array[LEN_PLAY+1]);
+int playerIndex(char letter);
+int locationIndex(char string[2]);
+void pushCus(HunterView current, PlayerID player, LocationID location);
+int isSeaLocation(LocationID location);
+int playerIsDead(HunterView current, PlayerID player);
+int scoreIsZero(HunterView current);
+int draculaMeetsHunter(HunterView current);
 // isSeaLocation mainly used to see if Dracula is at sea
 
 
@@ -185,7 +185,7 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
                 //     gameIsOver = TRUE;
                 // }
                 if (playerIsDead(hunterView, currPlayer)) {
-                    if
+                    
                     diedThisTurn = TRUE;
                     hunterView->health[currPlayer] = 0;
                     // TODO - location becomes the hospital
@@ -254,27 +254,29 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
                     if (playerIsDead(hunterView, PLAYER_DRACULA)) {
                         // game over
                     }
-                // TODO handle dracula walking into hunter(S!!!)
-                // if (currLocation != SEA_UNKNOWN &&
-                //     !isSeaLocation(currLocation)) {
-                //     PlayerID j;
-                //     for (j = 0; j < NUM_PLAYERS - 1; j++) {
-                //         if 
-                //     }
+                    // TODO handle dracula walking into hunter(S!!!)
+                    // if (currLocation != SEA_UNKNOWN &&
+                    //     !isSeaLocation(currLocation)) {
+                    //     PlayerID j;
+                    //     for (j = 0; j < NUM_PLAYERS - 1; j++) {
+                    //         if 
+                    //     }
 
-                // }
-                // // } else if (draculaMeetsHunter(hunterView)) {
-                // //     // dracula encounters a hunter on his turn
-                // // }
-                if (hunterView->health[PLAYER_DRACULA] <= 0) {
-                    hunterView->score -= SCORE_LOSS_DRACULA_TURN;
+                    // }
+                    // // } else if (draculaMeetsHunter(hunterView)) {
+                    // //     // dracula encounters a hunter on his turn
+                    // // }
+                    if (hunterView->health[PLAYER_DRACULA] <= 0) {
+                        hunterView->score -= SCORE_LOSS_DRACULA_TURN;
+                    }
                 }
             }
         }
     }
 
+
     // we've gone through all the plays now. Time for some checking
-    assert(numPlays - 1 == hunterView->currTurn);
+    assert(numPlays - 1 == hunterView->currentTurn);
     // above will break if the game is over before all the
     // plays have been processed
 
@@ -444,29 +446,29 @@ LocationID * connectedLocations(HunterView currentView,
                                 int * numLocations, LocationID from, 
                                 PlayerID player, Round round, int road,
                                 int rail, int sea) {
-    
 
+    return numLocations;
 }
 
-static void makePlaysArray(char *pastPlays, int n, char *array[8]) {
+ void makePlaysArray(char *pastPlays, int n, char *array[LEN_PLAY+1]) {
     // n is the number of plays in the string
     int i;
     for (i = 0; i < n; i++) {
-        fscanf(pastPlays, "%s ", &array[i]);
+        sscanf(pastPlays, "%s ", array[i]);
     }
 }
 
-static int playerIndex(char letter) {
+ int playerIndex(char letter) {
     int i;
     for (i = 0; i < NUM_PLAYERS; i++) {
         if (letter == PLAYERS[i]) {
             return i;
         }
     }
-    assert("Well, crap son\n" == 42);
+    assert(1 == 2);
 }
 
-static int locationIndex(char *string) {
+ int locationIndex(char *string) {
     int i;
     for (i = 0; i < NUM_LOCATIONS; i++) {
         // changed this from NUM_MAP_LOCATIONS
@@ -477,20 +479,20 @@ static int locationIndex(char *string) {
         }
     }
     return UNKNOWN_LOCATION; // could be useful
-    assert("Well, that ain't a recognisable string" == 42);
+    //assert("Well, that ain't a recognisable string" == 42);
 }
 
-static void pushCus(HunterView current, PlayerID player, LocationID location) {
+ void pushCus(HunterView current, PlayerID player, LocationID location) {
 
     int i;
-    for (i = 0; i < 5, i++) {
+    for (i = 0; i < 5; i++) {
         current->locations[player][i + 1] = current->locations[player][i];
     }
     current->locations[player][0] = location;
 
 }
 
-static int isSeaLocation (LocationID location) {
+ int isSeaLocation (LocationID location) {
     // used for reducing vampire health
     int i;
     for (i = 0; i < NUM_SEA_LOCATIONS; i++) {
@@ -501,21 +503,21 @@ static int isSeaLocation (LocationID location) {
     return FALSE;
 }
 
-static int playerIsDead(HunterView current, PlayerID player) {
+ int playerIsDead(HunterView current, PlayerID player) {
     if (current->health[player] <= 0) {
         return TRUE;
     }
     return FALSE;
 }
 
-static int scoreIsZero(HunterView current) {
+ int scoreIsZero(HunterView current) {
     if (current->score <= 0) {
         return TRUE;
     }
     return FALSE;
 }
 
-static int draculaMeetsHunter(HunterView current) {
+ int draculaMeetsHunter(HunterView current) {
     int i;
     const int draculaLoc = current->locations[PLAYER_DRACULA][0];
     for (i = 0; i < NUM_PLAYERS - 1; i++) {
@@ -523,5 +525,6 @@ static int draculaMeetsHunter(HunterView current) {
             return i;
         }
     }
+
     return FALSE;
 }
