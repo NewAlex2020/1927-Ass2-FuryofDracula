@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <assert.h>
 #include "game.h"
 #include "HunterView.h"
@@ -13,15 +14,15 @@
 #define FALSE    0
 #define LEN_PLAY 7
 #define PLAYERS {'G', 'S', 'H', 'M', 'D'}
-#define LOCATION_CODES {
-    "AL", "AM", "AT", "BA", "BI", "BE", "BR", "BO", "BU", "BC",
-    "BD", "CA", "CG", "CD", "CF", "CO", "CN", "DU", "ED", "FL",
-    "FR", "GA", "GW", "GE", "GO", "GR", "HA", "JM", "KL", "LE",
-    "LI", "LS", "LV", "LO", "MA", "MN", "MR", "MI", "MU", "NA",
-    "NP", "NU", "PA", "PL", "PR", "RO", "SA", "SN", "SR", "SJ",
-    "SO", "ST", "SW", "SZ", "TO", "VA", "VR", "VE", "VI", "ZA",
-    "ZU",
-    "NS", "EC", "IS", "AO", "BB", "MS", "TS", "IO", "AS", "BS"
+#define LOCATION_CODES { \
+    "AL", "AM", "AT", "BA", "BI", "BE", "BR", "BO", "BU", "BC", \
+    "BD", "CA", "CG", "CD", "CF", "CO", "CN", "DU", "ED", "FL", \
+    "FR", "GA", "GW", "GE", "GO", "GR", "HA", "JM", "KL", "LE", \
+    "LI", "LS", "LV", "LO", "MA", "MN", "MR", "MI", "MU", "NA", \
+    "NP", "NU", "PA", "PL", "PR", "RO", "SA", "SN", "SR", "SJ", \
+    "SO", "ST", "SW", "SZ", "TO", "VA", "VR", "VE", "VI", "ZA", \
+    "ZU", \
+    "NS", "EC", "IS", "AO", "BB", "MS", "TS", "IO", "AS", "BS" \
 }
 #define TRAP_ENCOUNTER_CODE     'T'
 #define IMMATURE_ENCOUNTER_CODE 'V'
@@ -36,7 +37,7 @@
 static void makePlaysArray(char *pastPlays, int n, char *array[LEN_PLAY+1]);
 static int playerIndex(char letter);
 static int locationIndex(char string[2]);
-static void push(HunterView current);
+static void pushCus(HunterView current, playerID player, LocationID location);
 
 
 struct hunterView {
@@ -89,8 +90,7 @@ struct hunterView {
 // You are free to ignore messages if you wish.
 HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
     HunterView hunterView = malloc( sizeof( struct hunterView ) );
-    hunterView->hello = 42;
-    return hunterView;
+    //return hunterView;
 
     // ** How's the parsing being done? Will we just shove each
     // ** 'play' string into an array of strings? Such as:
@@ -123,7 +123,7 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
         hunterView->health[i] = GAME_START_HUNTER_LIFE_POINTS;
     }
     hunterView->health[PLAYER_DRACULA] = GAME_START_BLOOD_POINTS;
-    hunterView->score = GAME_START_SCORE
+    hunterView->score = GAME_START_SCORE;
 
     int currTurn;
     int diedThisTurn = FALSE;
@@ -134,7 +134,7 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
 
         char locationString[3] = {currentPlay[1],currentPlay[2],'\0'}; 
         LocationID currLocation = locationIndex(locationString);
-        push(hunterView, currPlayer, currLocation);
+        pushCus(hunterView, currPlayer, currLocation);
 
         int strIndex = 3; // start of the actions
         // each turn consists of moving location, then doing an action
@@ -154,7 +154,7 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
                 }
                 if (hunterView->health[currPlayer] <= 0) {
                     diedThisTurn = TRUE;
-                    hunterView->health[currPlayer] == 0;
+                    hunterView->health[currPlayer] = 0;
                     // TODO - location becomes the hospital
                     hunterView->score -= SCORE_LOSS_HUNTER_HOSPITAL;
                 }
@@ -198,6 +198,8 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
         free(playsArray[i]);
     }
     free(playsArray);
+
+    return hunterView;
 }
      
      
@@ -387,7 +389,7 @@ static int locationIndex(char *string) {
     assert("Well, that ain't a recognisable string" == 42);
 }
 
-static void (HunterView current, PlayerID player, LocationID location) {
+static void pushCus(HunterView current, PlayerID player, LocationID location) {
 
     int i;
     for (i = 0; i < 5, i++) {
