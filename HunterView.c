@@ -28,11 +28,11 @@
 // penultimate line [61-70] are seas, the rest [0-60] are cities,
 // last line [71-79] are other locations, UNKNOWN == -1
 #define SEA_LOCATION_CODES { \
-    NORTH_SEA, ENGLISH_CHANNEL, IRISH_SEA, ATLANTIC_OCEAN, \
+    NORTH_SEA, ENGLISH_CHANNEL, IRISH_SEA, ATLANTIC_OCEAN,        \
     BAY_OF_BISCAY, MEDITERRANEAN_SEA, TYRRHENIAN_SEA, IONIAN_SEA, \
     ADRIATIC_SEA, BLACK_SEA \
 }
-#define NUM_SEA_LOCATIONS 10
+#define NUM_SEA_LOCATIONS 10 // not including SEA_UNKNOWN
 #define TRAP_ENCOUNTER_CODE     'T'
 #define IMMATURE_ENCOUNTER_CODE 'V'
 #define DRACULA_ENCOUNTER_CODE  'D'
@@ -48,6 +48,9 @@ static int playerIndex(char letter);
 static int locationIndex(char string[2]);
 static void pushCus(HunterView current, PlayerID player, LocationID location);
 static int isSeaLocation(LocationID location);
+static int playerIsDead(HunterView current, PlayerID player);
+static int scoreIsZero(HunterView current);
+// isSeaLocation mainly used to see if Dracula is at sea
 
 
 struct hunterView {
@@ -149,10 +152,10 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
 
     char currentPlay[LEN_PLAY + 1];
     int currTurn; // DO NOT CONFUSE WITH currTurn from hunterView
-    int diedThisTurn = FALSE;
+    int gameIsOver = FALSE;
     PlayerID currPlayer;
 
-    for (currTurn = 0; currTurn < numPlays; currTurn++) {
+    for (currTurn = 0; currTurn < numPlays && !gameIsOver; currTurn++) {
         strcpy (currentPlay, playsArray[currTurn]);
         currPlayer = playerIndex(currentPlay[0]);
 
@@ -166,6 +169,7 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
         // now to process the actions
         if (currPlayer != PLAYER_DRACULA) {
             int strIndex = 3; // start of the actions
+            int diedThisTurn = FALSE;
             while (diedThisTurn == FALSE && strIndex < LEN_PLAY
                    && currentPlay[strIndex] != '.') {
                 if (currentPlay[strIndex] == TRAP_ENCOUNTER_CODE) {
@@ -177,7 +181,12 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
                     hunterView->health[currPlayer] -= LIFE_LOSS_DRACULA_ENCOUNTER;
                     hunterView->health[PLAYER_DRACULA] -= LIFE_LOSS_HUNTER_ENCOUNTER;
                 }
-                if (hunterView->health[currPlayer] <= 0) {
+                // if (playerIsDead(hunterView, PLAYER_DRACULA)) {
+                //     // GAME OVER
+                //     gameIsOver = TRUE;
+                // }
+                if (playerIsDead(hunterView, currPlayer)) {
+                    if
                     diedThisTurn = TRUE;
                     hunterView->health[currPlayer] = 0;
                     // TODO - location becomes the hospital
@@ -188,8 +197,9 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
                     // didn't die this turn
                     pushCus(hunterView, currPlayer, currLocation);
                 }
-                if (hunterView->health[PLAYER_DRACULA] <= 0) {
+                if (playerIsDead(hunterView, PLAYER_DRACULA)) {
                     // GAME OVER MATE
+                    gameIsOver = TRUE;
                 }
                 strIndex++;
             }
@@ -205,6 +215,7 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
 
         } else { // omegherd dracula's turn
             assert(currPlayer == PLAYER_DRACULA);
+            assert(currLocation != ST_JOSEPH_AND_ST_MARYS);
             // TODO - action's for dracula, besides placing
             // down his encounters
             if (currentPlay[3] == TRAP_PLACED_CODE) {
@@ -223,18 +234,31 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
             }
             // end of turn, TODO check for dead vampire
 
-            if (hunterView->health[currPlayer] <= 0) {
+            if (playerIsDead(hunterView, PLAYER_DRACULA)) {
                 // you just won the game
+                gameIsOver = TRUE;
             } else {
                 // life goes on hunting
                 pushCus(hunterView, currPlayer, currLocation);
                 // sea hp loss is processed post-action
-                if (currLocation == SEA_UNKNOWN || isSeaLocation(currLocation)) {
-                    hunterView->health[PLAYER_DRACULA] -= LIFE_LOSS_SEA;
-                } else if (currLocation == CASTLE_DRACULA) {
+                // if (currLocation == SEA_UNKNOWN || isSeaLocation(currLocation)) {
+                //     hunterView->health[PLAYER_DRACULA] -= LIFE_LOSS_SEA;
+                //     // TODO - check if he's dead this time
+                // } else if (currLocation == CASTLE_DRACULA) {h
+                //     hunterView->health[PLAYER_DRACULA] += LIFE_GAIN_CASTLE_DRACULA;
+                // }
+                if (currLocation == CASTLE_DRACULA) {
                     hunterView->health[PLAYER_DRACULA] += LIFE_GAIN_CASTLE_DRACULA;
+                } else if (currLocation == SEA_UNKNOWN ||
+                           isSeaLocation(currLocation)) {
+                    hunterView->health[PLAYER_DRACULA] -= LIFE_LOSS_SEA;
+                    if (playerIsDead(hunterView, PLAYER_DRACULA)) {
+                        // game over
+                    }
                 }
-                hunterView->score -= SCORE_LOSS_DRACULA_TURN;
+                if (hunterView->health[PLAYER_DRACULA] <= 0) {
+                    hunterView->score -= SCORE_LOSS_DRACULA_TURN;
+                }
             }
         }
     }
@@ -461,6 +485,20 @@ static int isSeaLocation (LocationID location) {
         if (location == SEA_LOCATION_CODES[i]) {
             return TRUE;
         }
+    }
+    return FALSE;
+}
+
+static int playerIsDead(HunterView current, PlayerID player) {
+    if (current->health[player] <= 0) {
+        return TRUE;
+    }
+    return FALSE;
+}
+
+static int scoreIsZero(HunterView current) {
+    if (current->score <= 0) {
+        return TRUE;
     }
     return FALSE;
 }
