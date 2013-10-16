@@ -5,7 +5,7 @@
 #include "HunterView.h"
 #include "Graph.h"
 #include "cities.h"
-#include "connections_v1.2.h"
+#include "connections.h"
 
 typedef struct vNode *VList;
 
