@@ -24,7 +24,7 @@ int main(int argc, char * argv[]) {
         
 	disposeHunterView(hv);
 	printf("passed\n");
-
+z
 		printf("Test for Dracula trail and basic functions\n");
 	hv = newHunterView("GGE.... SLV.... HZU.... MBB.... DJM....", messages2);
 	assert(getCurrentPlayer(hv) == PLAYER_LORD_GODALMING);
