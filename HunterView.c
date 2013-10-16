@@ -445,7 +445,48 @@ LocationID * connectedLocations(HunterView currentView,
                                 PlayerID player, Round round, int road,
                                 int rail, int sea) {
     
+    LocationID * connected = malloc(sizeof(LocationID)*(*numLocations));
 
+    connected[0] = from;
+
+    int count = 0;
+
+    // May I present the Three Amigos:
+
+    // Road!
+    if (road) {
+        int i;
+        for (i=0; i<NUM_MAP_LOCATIONS; i++) {
+            if (isAdjacent(currentView->board, from, i, LAND)) {
+                connected[count] = i;
+                count++;
+            }
+        }
+    }
+
+    // Sea!
+    if (sea) {
+        int i;
+        for (i=0; i<NUM_MAP_LOCATIONS; i++) {
+            if (isAdjacent(currentView->board, from, i, SEA)) {
+                connected[count] = i;
+                count++;
+            }
+        }
+    }
+
+    // Rail!
+    if (rail) {
+        int i;
+        for (i=0; i<NUM_MAP_LOCATIONS; i++) {
+            if (isAdjacent(currentView->board, from, i, RAIL)) {
+                connected[count] = i;
+                count++;
+            }
+        }
+    }
+
+    return connected;
 }
 
 static void makePlaysArray(char *pastPlays, int n, char *array[8]) {
