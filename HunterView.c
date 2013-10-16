@@ -168,6 +168,9 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
 //printf("%d, %d\n",currPlayer,currLocation);
 
         pushCus(hunterView, currPlayer, currLocation);
+        if (hunterView->health[currPlayer] == 0) {
+            hunterView->health[currPlayer] = GAME_START_HUNTER_LIFE_POINTS;
+        }
         // could be wrong: what if they die this turn?
         
         // each turn consists of moving location, then doing an action
@@ -193,13 +196,13 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
                 //     gameIsOver = TRUE;
                 // }
                 if (playerIsDead(hunterView, currPlayer)) {
-                    
+
                     diedThisTurn = TRUE;
                     hunterView->health[currPlayer] = 0;
                     // TODO - location becomes the hospital
                     hunterView->score -= SCORE_LOSS_HUNTER_HOSPITAL;
                     // unsure about this
-                    hunterView->locations[currPlayer][0] = ST_JOSEPH_AND_ST_MARYS;
+                    //hunterView->locations[currPlayer][0] = ST_JOSEPH_AND_ST_MARYS;
                 } else {
                     // didn't die this turn
                     //pushCus(hunterView, currPlayer, currLocation);
@@ -368,8 +371,12 @@ int getHealth(HunterView currentView, PlayerID player) {
     // end turn in same city as their previous turn => +3hp == LIFE_GAIN_REST
     // hp capped at 9hp
     // check *****, not sure if it depends on who enters the city
-printf("Health: %d\n",currentView->health[player]);
-    return currentView->health[player];
+//printf("Health: %d\n",currentView->health[player]);
+    if (getLocation(currentView, player) == ST_JOSEPH_AND_ST_MARYS) {
+        return GAME_START_HUNTER_LIFE_POINTS;
+    } else {
+        return currentView->health[player];
+    }
 
 }
 
@@ -400,7 +407,11 @@ printf("Health: %d\n",currentView->health[player]);
 //   LOCATION_UNKNOWN if the round number is 0
 LocationID getLocation(HunterView currentView, PlayerID player) {
 //printf("%d\n",currentView->locations[player][0]);
-    return currentView->locations[player][0];
+    if (currentView->health[player] == 0) {
+        return ST_JOSEPH_AND_ST_MARYS;
+    } else {
+        return currentView->locations[player][0];
+    }
 }   
 
 // Functions that return information about the history of the game
