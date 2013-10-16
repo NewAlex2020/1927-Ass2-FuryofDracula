@@ -5,7 +5,7 @@
 #include "HunterView.h"
 #include "Graph.h"
 #include "cities.h"
-#include "connections_v1.2.h"
+#include "connections.h"
 
 typedef struct vNode *VList;
 
@@ -34,6 +34,7 @@ Graph newGraph() {
      
     g->nE[LAND] = 0;
     g->nE[SEA] = 0; 
+    g->nE[RAIL] = 0;
     makeHunterMap(g);
     return g; 
 } 
@@ -58,6 +59,7 @@ void destroyGraph(Graph g){
 
 
 void addLink(Graph g, Location start, Location end, Transport type){
+    printf("%d %d\n", start, end);
     VList endNode = malloc(sizeof(struct vNode));
     endNode->v = end;
     endNode->type = type;
