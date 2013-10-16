@@ -337,13 +337,10 @@ void getHistory (HunterView currentView, PlayerID player,LocationID trail[TRAIL_
 
 // y
 
-// This function returns an array of LocationID that represent all lo
-
-// cations that are connected 
-// to the given LocationID. 
-// road, rail and sea are connections should only be considered if th 
-// e road, rail, sea parameters 
-// are TRUE.
+// This function returns an array of LocationID that represent all
+// locations that are connected to the given LocationID. 
+// road, rail and sea are connections should only be considered if
+// the road, rail, sea parameters are TRUE.
 // The size of the array should be stored in the variable pointed to 
 // by numLocations
 // The array can be in any order but must contain unique entries
@@ -353,9 +350,11 @@ void getHistory (HunterView currentView, PlayerID player,LocationID trail[TRAIL_
 // e hospital or travel by rail
 // but need not take into account draculas trail
 // The destination 'from' should be included.
-LocationID * connectedLocations(HunterView currentView, int * numLocations, LocationID from, 
-                              PlayerID player, Round round, int road, int rail, int sea) {
-
+LocationID * connectedLocations(HunterView currentView,
+                                int * numLocations, LocationID from, 
+                                PlayerID player, Round round, int road,
+                                int rail, int sea) {
+    
 
 }
 
