@@ -516,7 +516,7 @@ LocationID * connectedLocations(HunterView currentView,
                     count++;
 
                     int j;
-                    if (j=0; j<NUM_MAP_LOCATIONS; j++) {
+                    for (j=0; j<NUM_MAP_LOCATIONS; j++) {
                         if (isAdjacent(currentView->board, i, j, RAIL)) {
                             connected[count] = j;
                             count++;
@@ -533,7 +533,7 @@ LocationID * connectedLocations(HunterView currentView,
                     count++;
                     
                     int j;
-                    if (j=0; j<NUM_MAP_LOCATIONS; j++) {
+                    for (j=0; j<NUM_MAP_LOCATIONS; j++) {
                         if (isAdjacent(currentView->board, i, j, RAIL)) {
                             connected[count] = j;
                             count++;
