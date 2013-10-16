@@ -10,8 +10,6 @@
 #include <ctype.h>
 
 // our local #defines
-#define TRUE     (1 == 1) // CHANGED FROM JUST 1
-#define FALSE    (1 == 0)
 #define LEN_PLAY 7
 #define PLAYERS {'G', 'S', 'H', 'M', 'D'}
 #define LOCATION_CODES { \
