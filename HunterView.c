@@ -149,8 +149,11 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
     hunterView->health[PLAYER_DRACULA] = GAME_START_BLOOD_POINTS;
     hunterView->score = GAME_START_SCORE;
     // initialise location to unknown location
+    int k;
     for (i = 0; i < NUM_PLAYERS; i++) {
-        pushCus(hunterView, i, UNKNOWN_LOCATION);
+        for (k = 0; k < TRAIL_SIZE; k++) {
+            pushCus(hunterView, i, UNKNOWN_LOCATION);
+        }
     }
 
     char currentPlay[LEN_PLAY + 1];
@@ -457,7 +460,7 @@ void getHistory (HunterView currentView, PlayerID player,LocationID trail[TRAIL_
 
     int i;
     for (i=0; i<TRAIL_SIZE; i++) {
-        //printf("%d\n", locations[i]);
+//printf("%d\n", locations[i]);
         trail[i] = locations[i];
     }
 }
@@ -609,7 +612,7 @@ LocationID * connectedLocations(HunterView currentView,
 
  void pushCus(HunterView current, PlayerID player, LocationID location) {
     int i;
-    for (i = 4; i > 0; i--) {
+    for (i = (TRAIL_SIZE - 1); i > 0; i--) {
         current->locations[player][i] = current->locations[player][i - 1];
     }
     current->locations[player][0] = location;
