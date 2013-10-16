@@ -111,7 +111,7 @@ struct hunterView {
 HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
     HunterView hunterView = malloc( sizeof( struct hunterView ) );
     //return hunterView;
-
+    hunterView->board = newGraph();
     // ** How's the parsing being done? Will we just shove each
     // ** 'play' string into an array of strings? Such as:
     // char playStrings[SOME_CONSTANT][8];
@@ -159,6 +159,7 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
     PlayerID currPlayer;
 
     for (currTurn = 0; currTurn < numPlays && !gameIsOver; currTurn++) {
+//printf("Turn: %d\n",currTurn);
         strcpy (currentPlay, playsArray[currTurn]);
         currPlayer = playerIndex(currentPlay[0]);
 
@@ -172,31 +173,42 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
             hunterView->health[currPlayer] = GAME_START_HUNTER_LIFE_POINTS;
         }
         // could be wrong: what if they die this turn?
-        
+
         // each turn consists of moving location, then doing an action
 
         // now to process the actions
         if (currPlayer != PLAYER_DRACULA) {
+
+            if (hunterView->locations[currPlayer][0] ==
+                hunterView->locations[currPlayer][1]) {
+//printf("Locs: %d, %d, %d\n",hunterView->locations[currPlayer][0],hunterView->locations[currPlayer][1],hunterView->locations[currPlayer][2]);
+            
+                hunterView->health[currPlayer] += LIFE_GAIN_REST;
+                if (hunterView->health[currPlayer] > GAME_START_HUNTER_LIFE_POINTS) {
+                    hunterView->health[currPlayer] = GAME_START_HUNTER_LIFE_POINTS;
+                }
+
+    //printf("%d Rested - Health: %d\n", currPlayer, hunterView->health[currPlayer]);
+            }
+
             int strIndex = 3; // start of the actions
             int diedThisTurn = FALSE;
             while (diedThisTurn == FALSE && strIndex < LEN_PLAY
                    && currentPlay[strIndex] != '.') {
                 if (currentPlay[strIndex] == TRAP_ENCOUNTER_CODE) {
                     hunterView->health[currPlayer] -= LIFE_LOSS_TRAP_ENCOUNTER;
+//printf("%d Met Trap - Health: %d\n", currPlayer, hunterView->health[currPlayer]);
                 } else if (currentPlay[strIndex] == IMMATURE_ENCOUNTER_CODE) {
                     // pass
                 } else if (currentPlay[strIndex] == DRACULA_ENCOUNTER_CODE) {
                     // omemergerhd I touched Dracula
                     hunterView->health[currPlayer] -= LIFE_LOSS_DRACULA_ENCOUNTER;
+//printf("%d Met Drac - Health: %d\n", currPlayer, hunterView->health[currPlayer]);
     //printf("PLayer: %d\n",currPlayer);
                     hunterView->health[PLAYER_DRACULA] -= LIFE_LOSS_HUNTER_ENCOUNTER;
                 }
-                // if (playerIsDead(hunterView, PLAYER_DRACULA)) {
-                //     // GAME OVER
-                //     gameIsOver = TRUE;
-                // }
-                if (playerIsDead(hunterView, currPlayer)) {
 
+                if (playerIsDead(hunterView, currPlayer)) {
                     diedThisTurn = TRUE;
                     hunterView->health[currPlayer] = 0;
                     // TODO - location becomes the hospital
@@ -215,13 +227,8 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
             }
             // end of player's turn TODO
             // we have already established the player's end location
-            if (hunterView->locations[currPlayer][0] ==
-                hunterView->locations[currPlayer][1]) {
 
-    //printf("Locs: %d, %d, %d\n",hunterView->locations[currPlayer][0],hunterView->locations[currPlayer][1],hunterView->locations[currPlayer][2]);
-                
-                hunterView->health[currPlayer] += LIFE_GAIN_REST;
-            }
+
             if (hunterView->health[currPlayer] > GAME_START_HUNTER_LIFE_POINTS) {
                 hunterView->health[currPlayer] = GAME_START_HUNTER_LIFE_POINTS;
             }
@@ -371,7 +378,7 @@ int getHealth(HunterView currentView, PlayerID player) {
     // end turn in same city as their previous turn => +3hp == LIFE_GAIN_REST
     // hp capped at 9hp
     // check *****, not sure if it depends on who enters the city
-//printf("Health: %d\n",currentView->health[player]);
+//printf("%d Health: %d\n", player, currentView->health[player]);
     if (getLocation(currentView, player) == ST_JOSEPH_AND_ST_MARYS) {
         return GAME_START_HUNTER_LIFE_POINTS;
     } else {
