@@ -3,9 +3,8 @@
 #include <stdlib.h>
 #include "Graph.h"
 #include "cities.h"
-
-#define TRUE (1==1)
-#define FALSE (1==0)
+#include "game.h"
+#include "HunterView.h"
 
 typedef struct vNode *VList;
 
