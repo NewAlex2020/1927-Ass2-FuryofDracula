@@ -41,7 +41,7 @@ struct hunterView {
     // OH GOD WE NEED TO WRITE THIS OH GOD, WE DON'T HAVE MUCH TIME.
     // Stuff it'll need.
     Graph *board; // Board representation.
-    int currentTurn;
+    PlayerID currentTurn;
     int score;   
     int roundNum;
     // ===== We can do these three in the newHunterView func at creation
@@ -220,8 +220,7 @@ Round getRound (HunterView currentView) {
 //   MINA_HARKER    (3): Mina Harker's turn
 //   DRACULA        (4): Dracula's turn
 PlayerID getCurrentPlayer (HunterView currentView) {
-
-
+    return currentView->currentTurn;
 }
 
 //Get the current score
