@@ -53,38 +53,17 @@ int draculaMeetsHunter(HunterView current);
 
 
 struct hunterView {
-    // OH GOD WE NEED TO WRITE THIS OH GOD, WE DON'T HAVE MUCH TIME.
-    // Stuff it'll need.
+
     Graph board; // Board representation.
-    // PlayerID currentTurn; // don't confuse with int currTurn
-    //                       // from newHunterView
+
     int currentTurn; // from 0 to N - derive player and round from this
     int curr;
     int score;
-    // Round roundNum;
-
-    // ===== We can do these three in the newHunterView func at creation
-    // . Or jsut store the history String
-    // ===== and do it when the respective functions are called. Depends
-    //  on what seems easier.
-    // ===== We're gonna be parsing the history string to get score, cur
-    // rentTurn and round anyway. Could
-    // ===== be easier to also extract the info below and store it.
-    // - array of player healths (inc. Drac). (Maybe be easier to do in 
-    // the function getHealth, may not be.)
-    // - array of player locations (inc. Drac).
-    // - array of array's of player past 6 turn trails (inc. Drac)
 
     int locations[NUM_PLAYERS][TRAIL_SIZE];
-    // TODO - in the case of Dracula, is this sufficient in terms of
-    // the 
 
-    // ** If we're doing everything iteratively, perhaps:
-    int health[NUM_PLAYERS]; // initialise appropriately
-    // some loop for parsing, assume i is the looping variable
+    int health[NUM_PLAYERS]; 
 
-    // The data format for player plays is actually retarded, have to
-    // account for different events not being there, oh well.
 };
      
 // newHunterView creates a new hunter view to summarise the current 
@@ -136,6 +115,7 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
     char ** playsArray;
     playsArray = (char **) malloc(numPlays * sizeof(char *));
     for (i = 0; i < numPlays; i++) {
+
         playsArray[i] = (char *) malloc((LEN_PLAY + 1) * sizeof(char));
     }
     makePlaysArray(pastPlays, numPlays, playsArray);
@@ -144,13 +124,18 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
     // BEGIN THE GREAT LOOP OF PROCESSING SHIT.
     // before the game starts, initiate health
     for (i = 0; i < NUM_PLAYERS - 1; i++) {
+
         hunterView->health[i] = GAME_START_HUNTER_LIFE_POINTS;
     }
     hunterView->health[PLAYER_DRACULA] = GAME_START_BLOOD_POINTS;
     hunterView->score = GAME_START_SCORE;
     // initialise location to unknown location
+    int k;
     for (i = 0; i < NUM_PLAYERS; i++) {
-        pushCus(hunterView, i, UNKNOWN_LOCATION);
+        for (k = 0; k < TRAIL_SIZE; k++) {
+
+            pushCus(hunterView, i, UNKNOWN_LOCATION);
+        }
     }
 
     char currentPlay[LEN_PLAY + 1];
@@ -159,14 +144,12 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
     PlayerID currPlayer;
 
     for (currTurn = 0; currTurn < numPlays && !gameIsOver; currTurn++) {
-//printf("Turn: %d\n",currTurn);
         strcpy (currentPlay, playsArray[currTurn]);
         currPlayer = playerIndex(currentPlay[0]);
 
         char locationString[3] = {currentPlay[1],currentPlay[2],'\0'}; 
         LocationID currLocation = locationIndex(locationString);
 
-//printf("%d, %d\n",currPlayer,currLocation);
 
         pushCus(hunterView, currPlayer, currLocation);
         if (hunterView->health[currPlayer] == 0) {
@@ -181,43 +164,38 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
 
             if (hunterView->locations[currPlayer][0] ==
                 hunterView->locations[currPlayer][1]) {
-//printf("Locs: %d, %d, %d\n",hunterView->locations[currPlayer][0],hunterView->locations[currPlayer][1],hunterView->locations[currPlayer][2]);
             
                 hunterView->health[currPlayer] += LIFE_GAIN_REST;
                 if (hunterView->health[currPlayer] > GAME_START_HUNTER_LIFE_POINTS) {
+
                     hunterView->health[currPlayer] = GAME_START_HUNTER_LIFE_POINTS;
                 }
 
-    //printf("%d Rested - Health: %d\n", currPlayer, hunterView->health[currPlayer]);
             }
 
             int strIndex = 3; // start of the actions
             int diedThisTurn = FALSE;
             while (diedThisTurn == FALSE && strIndex < LEN_PLAY
                    && currentPlay[strIndex] != '.') {
+
                 if (currentPlay[strIndex] == TRAP_ENCOUNTER_CODE) {
                     hunterView->health[currPlayer] -= LIFE_LOSS_TRAP_ENCOUNTER;
-//printf("%d Met Trap - Health: %d\n", currPlayer, hunterView->health[currPlayer]);
+
                 } else if (currentPlay[strIndex] == IMMATURE_ENCOUNTER_CODE) {
                     // pass
                 } else if (currentPlay[strIndex] == DRACULA_ENCOUNTER_CODE) {
                     // omemergerhd I touched Dracula
                     hunterView->health[currPlayer] -= LIFE_LOSS_DRACULA_ENCOUNTER;
-//printf("%d Met Drac - Health: %d\n", currPlayer, hunterView->health[currPlayer]);
-    //printf("PLayer: %d\n",currPlayer);
                     hunterView->health[PLAYER_DRACULA] -= LIFE_LOSS_HUNTER_ENCOUNTER;
                 }
 
                 if (playerIsDead(hunterView, currPlayer)) {
+
                     diedThisTurn = TRUE;
                     hunterView->health[currPlayer] = 0;
-                    // TODO - location becomes the hospital
                     hunterView->score -= SCORE_LOSS_HUNTER_HOSPITAL;
-                    // unsure about this
-                    //hunterView->locations[currPlayer][0] = ST_JOSEPH_AND_ST_MARYS;
                 } else {
                     // didn't die this turn
-                    //pushCus(hunterView, currPlayer, currLocation);
                 }
                 if (playerIsDead(hunterView, PLAYER_DRACULA)) {
                     // GAME OVER MATE
@@ -225,19 +203,17 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
                 }
                 strIndex++;
             }
-            // end of player's turn TODO
-            // we have already established the player's end location
 
 
             if (hunterView->health[currPlayer] > GAME_START_HUNTER_LIFE_POINTS) {
+
                 hunterView->health[currPlayer] = GAME_START_HUNTER_LIFE_POINTS;
             }
 
         } else { // omegherd dracula's turn
             assert(currPlayer == PLAYER_DRACULA);
             assert(currLocation != ST_JOSEPH_AND_ST_MARYS);
-            // TODO - action's for dracula, besides placing
-            // down his encounters
+
             if (currentPlay[3] == TRAP_PLACED_CODE) {
                 // nothing?
             }
@@ -248,11 +224,12 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
             if (currentPlay[5] == TRAP_LEAVES_CODE) {
                 // nothing?
             } else if (currentPlay[5] == VAMPIRE_MATURES_CODE) {
+
                 hunterView->score -= SCORE_LOSS_VAMPIRE_MATURES;
+
             } else {
                 // nothing, currentPlay[5] == '.'
             }
-            // end of turn, TODO check for dead vampire
 
             if (playerIsDead(hunterView, PLAYER_DRACULA)) {
                 // you just won the game
@@ -260,30 +237,28 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
             } else {
                 
                 // life goes on hunting
-                //pushCus(hunterView, currPlayer, currLocation);
                 // sea hp loss is processed post-action
 
                 if (currLocation == CASTLE_DRACULA) {
+
                     hunterView->health[PLAYER_DRACULA] += LIFE_GAIN_CASTLE_DRACULA;
+
+                } else if (currLocation == TELEPORT) {
+
+                    hunterView->health[PLAYER_DRACULA] += LIFE_GAIN_CASTLE_DRACULA;
+
                 } else if (currLocation == SEA_UNKNOWN ||
                            isSeaLocation(currLocation)) {
+
                     hunterView->health[PLAYER_DRACULA] -= LIFE_LOSS_SEA;
+
                     if (playerIsDead(hunterView, PLAYER_DRACULA)) {
                         // game over
+                        gameIsOver = TRUE;
                     }
-                    // TODO handle dracula walking into hunter(S!!!)
-                    // if (currLocation != SEA_UNKNOWN &&
-                    //     !isSeaLocation(currLocation)) {
-                    //     PlayerID j;
-                    //     for (j = 0; j < NUM_PLAYERS - 1; j++) {
-                    //         if 
-                    //     }
 
-                    // }
-                    // // } else if (draculaMeetsHunter(hunterView)) {
-                    // //     // dracula encounters a hunter on his turn
-                    // // }
                     if (hunterView->health[PLAYER_DRACULA] <= 0) {
+
                         hunterView->score -= SCORE_LOSS_DRACULA_TURN;
                     }
                 } else if (currLocation == DOUBLE_BACK_1) {
@@ -291,6 +266,7 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
                     getHistory(hunterView, currPlayer, history);
 
                     if (isSeaLocation(history[1])) {
+
                         hunterView->health[PLAYER_DRACULA] -= LIFE_LOSS_SEA;
                     }
                 }
@@ -299,12 +275,7 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
     }
 
 
-
     hunterView->currentTurn = numPlays;
-    
-
-    // above will break if the game is over before all the
-    // plays have been processed
 
 
     // free random shit
@@ -378,7 +349,6 @@ int getHealth(HunterView currentView, PlayerID player) {
     // end turn in same city as their previous turn => +3hp == LIFE_GAIN_REST
     // hp capped at 9hp
     // check *****, not sure if it depends on who enters the city
-//printf("%d Health: %d\n", player, currentView->health[player]);
     if (getLocation(currentView, player) == ST_JOSEPH_AND_ST_MARYS) {
         return GAME_START_HUNTER_LIFE_POINTS;
     } else {
@@ -413,7 +383,7 @@ int getHealth(HunterView currentView, PlayerID player) {
 //   TELEPORT         if Dracula apparated back to Castle Dracula
 //   LOCATION_UNKNOWN if the round number is 0
 LocationID getLocation(HunterView currentView, PlayerID player) {
-//printf("%d\n",currentView->locations[player][0]);
+
     if (currentView->health[player] == 0) {
         return ST_JOSEPH_AND_ST_MARYS;
     } else {
@@ -457,7 +427,7 @@ void getHistory (HunterView currentView, PlayerID player,LocationID trail[TRAIL_
 
     int i;
     for (i=0; i<TRAIL_SIZE; i++) {
-        //printf("%d\n", locations[i]);
+
         trail[i] = locations[i];
     }
 }
@@ -614,12 +584,11 @@ LocationID * connectedLocations(HunterView currentView,
         }
     }
     return UNKNOWN_LOCATION; // could be useful
-    //assert("Well, that ain't a recognisable string" == 42);
 }
 
  void pushCus(HunterView current, PlayerID player, LocationID location) {
     int i;
-    for (i = 4; i > 0; i--) {
+    for (i = (TRAIL_SIZE - 1); i > 0; i--) {
         current->locations[player][i] = current->locations[player][i - 1];
     }
     current->locations[player][0] = location;
