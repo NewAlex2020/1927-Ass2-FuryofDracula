@@ -205,20 +205,20 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
 // HunterView
 // toBeDeleted. toBeDeleted should not be accessed after the call.
 void disposeHunterView( HunterView toBeDeleted ) {
-    //COMPLETE THIS IMPLEMENTATION
+    // COMPLETE THIS IMPLEMENTATION
     free( toBeDeleted );
 }
 
 
-//Functions to return simple information about the current state of 
+// Functions to return simple information about the current state of 
 // the game
 
-//Get the current round
+// Get the current round
 Round getRound (HunterView currentView) {
     return currentView->roundNum;
 }
 
-//Get the id of current player - ie whose turn is it?
+// Get the id of current player - ie whose turn is it?
 // Only returns a 'playerID' which is one of:
 //   LORD_GODALMING (0): Lord Godalming's turn
 //   DR_SEWARD      (1): Dr. Seward's turn
@@ -229,7 +229,7 @@ PlayerID getCurrentPlayer (HunterView currentView) {
     return currentView->currentTurn;
 }
 
-//Get the current score
+// Get the current score
 // Returns a positive integer [0...366]
 int getScore(HunterView currentView) { 
     // game starts at 366
@@ -240,7 +240,7 @@ int getScore(HunterView currentView) {
     return currentView->score;
 }
 
-//Get the current health points for a given player
+// Get the current health points for a given player
 // 'player' specifies which players's life/blood points to return
 //    and must be a value in the interval [0...4] (see 'player' type
 // )
@@ -293,7 +293,7 @@ LocationID getLocation(HunterView currentView, PlayerID player) {
     return currentView->locations[player][0];
 }   
 
-//Functions that return information about the history of the game
+// Functions that return information about the history of the game
 
 // Fills the trail array with the location ids of the last 6 turns f
 
@@ -333,26 +333,26 @@ void getHistory (HunterView currentView, PlayerID player,LocationID trail[TRAIL_
     }
 }
 
-//Functions that query the map to find information about connectivit
+// Functions that query the map to find information about connectivit
 
 // y
 
-//This function returns an array of LocationID that represent all lo
+// This function returns an array of LocationID that represent all lo
 
 // cations that are connected 
-//to the given LocationID. 
-//road, rail and sea are connections should only be considered if th 
+// to the given LocationID. 
+// road, rail and sea are connections should only be considered if th 
 // e road, rail, sea parameters 
-//are TRUE.
-//The size of the array should be stored in the variable pointed to 
+// are TRUE.
+// The size of the array should be stored in the variable pointed to 
 // by numLocations
-//The array can be in any order but must contain unique entries
-//Your function must take into account the round and player id for r
+// The array can be in any order but must contain unique entries
+// Your function must take into account the round and player id for r
 // ail travel
-//Your function must take into account that dracula can't move to th
+// Your function must take into account that dracula can't move to th
 // e hospital or travel by rail
-//but need not take into account draculas trail
-//The destination 'from' should be included.
+// but need not take into account draculas trail
+// The destination 'from' should be included.
 LocationID * connectedLocations(HunterView currentView, int * numLocations, LocationID from, 
                               PlayerID player, Round round, int road, int rail, int sea) {
 
