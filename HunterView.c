@@ -36,7 +36,9 @@
 static void makePlaysArray(char *pastPlays, int n, char *array[LEN_PLAY+1]);
 static int playerIndex(char letter);
 static int locationIndex(char string[2]);
+static void push(HunterView current);
      
+
 struct hunterView {
     // OH GOD WE NEED TO WRITE THIS OH GOD, WE DON'T HAVE MUCH TIME.
     // Stuff it'll need.
@@ -55,7 +57,7 @@ struct hunterView {
     // the function getHealth, may not be.)
     // - array of player locations (inc. Drac).
     // - array of array's of player past 6 turn trails (inc. Drac)
-
+    int locations[NUM_PLAYERS][6];
     // ** If we're doing everything iteratively, perhaps:
     int health[NUM_PLAYERS]; // initialise appropriately
     // some loop for parsing, assume i is the looping variable
@@ -375,4 +377,14 @@ static int locationIndex(char *string) {
         }
     }
     assert("Well, that ain't a recognisable string" == 42);
+}
+
+static void (HunterView current, PlayerID player, LocationID location) {
+
+    int i;
+    for (i = 0; i < 5, i++) {
+        current->locations[player][i + 1] = current->locations[player][i];
+    }
+    current->locations[player][0] = location;
+
 }
