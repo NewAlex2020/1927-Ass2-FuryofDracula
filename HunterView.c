@@ -477,11 +477,11 @@ LocationID * connectedLocations(HunterView currentView,
                                 PlayerID player, Round round, int road,
                                 int rail, int sea) {
     
-    LocationID * connected = malloc(sizeof(LocationID)*(*numLocations));
+    int count = 1;
+
+    LocationID * connected = malloc(sizeof(LocationID)*count);
 
     connected[0] = from;
-
-    int count = 0;
 
     // May I present the Three Amigos:
 
@@ -492,6 +492,7 @@ LocationID * connectedLocations(HunterView currentView,
             if (isAdjacent(currentView->board, from, i, LAND)) {
                 connected[count] = i;
                 count++;
+                connected = realloc(connected, sizeof(LocationID)*count);
             }
         }
     }
@@ -503,6 +504,7 @@ LocationID * connectedLocations(HunterView currentView,
             if (isAdjacent(currentView->board, from, i, SEA)) {
                 connected[count] = i;
                 count++;
+                connected = realloc(connected, sizeof(LocationID)*count);
             }
         }
     }
@@ -516,6 +518,7 @@ LocationID * connectedLocations(HunterView currentView,
                 if (isAdjacent(currentView->board, from, i, RAIL)) {
                     connected[count] = i;
                     count++;
+                    connected = realloc(connected, sizeof(LocationID)*count);
                 }
             }
         } else if ((round + player) % 4 == 2) {
@@ -525,12 +528,14 @@ LocationID * connectedLocations(HunterView currentView,
                 if (isAdjacent(currentView->board, from, i, RAIL)) {
                     connected[count] = i;
                     count++;
+                    connected = realloc(connected, sizeof(LocationID)*count);
 
                     int j;
                     for (j=0; j<NUM_MAP_LOCATIONS; j++) {
                         if (isAdjacent(currentView->board, i, j, RAIL)) {
                             connected[count] = j;
                             count++;
+                            connected = realloc(connected, sizeof(LocationID)*count);
                         }
                     }
                 }
@@ -542,17 +547,20 @@ LocationID * connectedLocations(HunterView currentView,
                 if (isAdjacent(currentView->board, from, i, RAIL)) {
                     connected[count] = i;
                     count++;
+                    connected = realloc(connected, sizeof(LocationID)*count);
                     
                     int j;
                     for (j=0; j<NUM_MAP_LOCATIONS; j++) {
                         if (isAdjacent(currentView->board, i, j, RAIL)) {
                             connected[count] = j;
                             count++;
+                            connected = realloc(connected, sizeof(LocationID)*count);
                             int k;
                             for (k=0; k<NUM_MAP_LOCATIONS; k++) {
                                 if (isAdjacent(currentView->board, j, k, RAIL)) {
                                     connected[count] = k;
                                     count++;
+                                    connected = realloc(connected, sizeof(LocationID)*count);
                                 }
                             }
                         }
@@ -561,6 +569,8 @@ LocationID * connectedLocations(HunterView currentView,
             }
         }
     }
+
+    *numLocations = count;
 
     return connected;
 }
