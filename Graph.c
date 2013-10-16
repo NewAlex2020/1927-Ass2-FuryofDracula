@@ -5,8 +5,6 @@
 #include "HunterView.h"
 #include "Graph.h"
 #include "cities.h"
-#include "game.h"
-#include "HunterView.h"
 
 typedef struct vNode *VList;
 
