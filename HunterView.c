@@ -11,8 +11,8 @@
 
 // our local #defines
 #define LEN_PLAY 7
-#define PLAYERS {'G', 'S', 'H', 'M', 'D'}
-#define LOCATION_CODES { \
+const char players[] = {'G', 'S', 'H', 'M', 'D'};
+const char* locationCodes[] = { \
     "AL", "AM", "AT", "BA", "BI", "BE", "BR", "BO", "BU", "BC", \
     "BD", "CA", "CG", "CD", "CF", "CO", "CN", "DU", "ED", "FL", \
     "FR", "GA", "GW", "GE", "GO", "GR", "HA", "JM", "KL", "LE", \
@@ -22,14 +22,14 @@
     "ZU", \
     "NS", "EC", "IS", "AO", "BB", "MS", "TS", "IO", "AS", "BS", \
     "C?", "S?", "HI", "D1", "D2", "D3", "D4", "D5", "TP"        \
-}
+};
 // penultimate line [61-70] are seas, the rest [0-60] are cities,
 // last line [71-79] are other locations, UNKNOWN == -1
-#define SEA_LOCATION_CODES { \
+const char seaLocationCodes[] = { \
     NORTH_SEA, ENGLISH_CHANNEL, IRISH_SEA, ATLANTIC_OCEAN,        \
     BAY_OF_BISCAY, MEDITERRANEAN_SEA, TYRRHENIAN_SEA, IONIAN_SEA, \
     ADRIATIC_SEA, BLACK_SEA \
-}
+};
 #define NUM_SEA_LOCATIONS 10 // not including SEA_UNKNOWN
 #define TRAP_ENCOUNTER_CODE     'T'
 #define IMMATURE_ENCOUNTER_CODE 'V'
@@ -461,7 +461,7 @@ LocationID * connectedLocations(HunterView currentView,
  int playerIndex(char letter) {
     int i;
     for (i = 0; i < NUM_PLAYERS; i++) {
-        if (letter == PLAYERS[i]) {
+        if (letter == players[i]) {
             return i;
         }
     }
@@ -472,7 +472,7 @@ LocationID * connectedLocations(HunterView currentView,
     int i;
     for (i = 0; i < NUM_LOCATIONS; i++) {
         // changed this from NUM_MAP_LOCATIONS
-        if (strcmp(string, LOCATION_CODES[i]) == 0) {
+        if (strcmp(string, locationCodes[i]) == 0) {
             // modified this to be correct, we now assume that
             // string is exactly 2 characters + '\0'
             return i;
@@ -496,7 +496,7 @@ LocationID * connectedLocations(HunterView currentView,
     // used for reducing vampire health
     int i;
     for (i = 0; i < NUM_SEA_LOCATIONS; i++) {
-        if (location == SEA_LOCATION_CODES[i]) {
+        if (location == seaLocationCodes[i]) {
             return TRUE;
         }
     }
