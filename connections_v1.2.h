@@ -4,7 +4,7 @@
 void addLink(Graph g, Location start, Location end, Transport type);
 
 void makeHunterMap(Graph g) {
-	//### LAND Connections ###
+		//### LAND Connections ###
 
 	//ATHENS
 	addLink(g, ATHENS, VALONA, LAND);
@@ -15,7 +15,7 @@ void makeHunterMap(Graph g) {
 	addLink(g, VALONA, SOFIA, LAND);
 	addLink(g, VALONA, SARAJEVO, LAND);
 
-	//SALONICA  
+	//SALONICA
 	addLink(g, SALONICA, VALONA, LAND);
 	addLink(g, SALONICA, SOFIA, LAND);
 
@@ -109,11 +109,11 @@ void makeHunterMap(Graph g) {
 	addLink(g, VIENNA, PRAGUE, LAND);
 	addLink(g, VIENNA, BUDAPEST, LAND);
 
-	//PRAGUE 
+	//PRAGUE
 	addLink(g, PRAGUE, NUREMBURG, LAND);
 	addLink(g, PRAGUE, BERLIN, LAND);
 	addLink(g, PRAGUE, VIENNA, LAND);
-	
+
 	//BERLIN
 	addLink(g, BERLIN, LEIPZIG, LAND);
 	addLink(g, BERLIN, HAMBURG, LAND);
@@ -345,7 +345,7 @@ void makeHunterMap(Graph g) {
 
 	//LIVERPOOL
 	addLink(g, LIVERPOOL, SWANSEA, LAND);
-	addLink(g, LIVERPOOL, EDINBURGH, LAND);
+	addLink(g, LIVERPOOL, MANCHESTER, LAND);
 
 	//DUBLIN
 	addLink(g, DUBLIN, GALWAY, LAND);
@@ -390,10 +390,10 @@ void makeHunterMap(Graph g) {
 
 	//LE_HAVRE
 	addLink(g, LE_HAVRE, PARIS, RAIL);
-	
+
 	//MARSEILLES
 	addLink(g, MARSEILLES, PARIS, RAIL);
-	
+
 	//PARIS
 	addLink(g, PARIS, BORDEAUX, RAIL);
 	addLink(g, PARIS, MARSEILLES, RAIL);
@@ -424,10 +424,10 @@ void makeHunterMap(Graph g) {
 
 	//GENEVA
 	addLink(g, GENEVA, MILAN, RAIL);
-	
+
 	//GEONA
 	addLink(g, GENOA, MILAN, RAIL);
-	
+
 	//MILAN
 	addLink(g, MILAN, GENEVA, RAIL);
 	addLink(g, MILAN, FLORENCE, RAIL);
@@ -461,10 +461,10 @@ void makeHunterMap(Graph g) {
 
 	//HAMBURG
 	addLink(g, HAMBURG, BERLIN, RAIL);
-	
+
 	//MUNICH
 	addLink(g, MUNICH, NUREMBURG, RAIL);
-	
+
 	//NUREMBURG
 	addLink(g, NUREMBURG, MUNICH, RAIL);
 	addLink(g, NUREMBURG, LEIPZIG, RAIL);
@@ -531,10 +531,10 @@ void makeHunterMap(Graph g) {
 
 	//EDINBURGH
 	addLink(g, EDINBURGH, MANCHESTER, RAIL);
-	
+
 	//LIVERPOOL
 	addLink(g, LIVERPOOL, MANCHESTER, RAIL);
-	
+
 	//### SEA Connections ###
 
 	//BLACK SEA
