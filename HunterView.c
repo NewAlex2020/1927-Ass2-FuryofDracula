@@ -43,7 +43,7 @@ struct hunterView {
     Graph *board; // Board representation.
     PlayerID currentTurn;
     int score;   
-    int roundNum;
+    Round roundNum;
     // ===== We can do these three in the newHunterView func at creation
     // . Or jsut store the history String
     // ===== and do it when the respective functions are called. Depends
@@ -208,8 +208,7 @@ void disposeHunterView( HunterView toBeDeleted ) {
 
 //Get the current round
 Round getRound (HunterView currentView) {
-
-
+    return currentView->roundNum;
 }
 
 //Get the id of current player - ie whose turn is it?
