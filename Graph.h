@@ -3,9 +3,9 @@
 
 #define LAND 0
 #define SEA 1
-#define RAIL 3
+#define RAIL 2
 #define ANY 4
-#define NUM_TRANSPORT 2
+#define NUM_TRANSPORT 3
 
 
 // vertices denoted by integers 0..N-1 
