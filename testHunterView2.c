@@ -79,43 +79,34 @@ int main() {
 	printf("Test for connections\n");
 	int seen[MAX_LOCATION], *edges;
 	hv = newHunterView("", messages);	
-
-	printf("No segfault yet...\n");
 	
-    int size;
+        int size;
 	edges = connectedLocations(hv,&size, GALATZ,PLAYER_LORD_GODALMING,0,1,0,0);
 	memset(seen, 0, MAX_LOCATION*sizeof(int));
 	for (i = 0; i< size ; i++) {
 		seen[edges[i]] = 1;
 	}
-	assert(seen[GALATZ]);
+        assert(seen[GALATZ]);
 	assert(seen[CONSTANTA] && seen[BUCHAREST] && seen[KLAUSENBURG] && seen[CASTLE_DRACULA]);
 	assert(size == 5);
-	free(edges);
-
-    printf("Still good...\n");
+        free(edges);
 	
 	//Checking Ionian seas
-    edges = connectedLocations(hv, &size,IONIAN_SEA, PLAYER_LORD_GODALMING, 0 , 0, 0, 1);
+        edges = connectedLocations(hv, &size,IONIAN_SEA, PLAYER_LORD_GODALMING, 0 , 0, 0, 1);
 	memset(seen, 0, MAX_LOCATION*sizeof(int));
 	for (i = 0; i < size; i++) {
 		seen[edges[i]] = 1;
 	}
 	assert(seen[IONIAN_SEA] && seen[BLACK_SEA] && seen[ADRIATIC_SEA] && seen[TYRRHENIAN_SEA]);
-    assert(seen[ATHENS] && seen[VALONA] && seen[SALONICA]);
-    assert(size == 7);
-    free(edges);
-
-    printf("Nearly done...\n");
+        assert(seen[ATHENS] && seen[VALONA] && seen[SALONICA]);
+        assert(size == 7);
+        free(edges);
 
 	edges = connectedLocations(hv, &size,ATHENS,PLAYER_LORD_GODALMING,0,0,1,0);
-    assert(size == 1);
-    assert(edges[0] == ATHENS);
-    free(edges);
-    printf("passed\n");
-    disposeHunterView(hv);
-
-    printf("No, can't be right\n");
+        assert(size == 1);
+        assert(edges[0] == ATHENS);
+        free(edges);
+        printf("passed\n");
+        disposeHunterView(hv);
 	return 0;
 }
-

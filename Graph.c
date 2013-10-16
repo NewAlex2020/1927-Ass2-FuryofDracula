@@ -5,6 +5,7 @@
 #include "HunterView.h"
 #include "Graph.h"
 #include "cities.h"
+#include "connections_v1.2.h"
 
 typedef struct vNode *VList;
 
@@ -20,10 +21,6 @@ struct GraphRep {
     VList connections[NUM_MAP_LOCATIONS]; // array of lists 
 }; 
 
-
-static void makeMap(Graph g);
-static void addLink(Graph g, Location start, Location end, Transport type);
-
 static int canReachInNRecurs(Graph g, Location start, Location end, Transport type, int n);
 
 Graph newGraph() { 
@@ -37,7 +34,7 @@ Graph newGraph() {
      
     g->nE[LAND] = 0;
     g->nE[SEA] = 0; 
-    makeMap(g);
+    makeHunterMap(g);
     return g; 
 } 
 
@@ -60,7 +57,7 @@ void destroyGraph(Graph g){
 }   
 
 
-static void addLink(Graph g, Location start, Location end, Transport type){
+void addLink(Graph g, Location start, Location end, Transport type){
     VList endNode = malloc(sizeof(struct vNode));
     endNode->v = end;
     endNode->type = type;
@@ -90,35 +87,6 @@ static void addLink(Graph g, Location start, Location end, Transport type){
     }
 
     g->nE[type]++;
-}
-
-static void makeMap(Graph g){
-   addLink(g, ALICANTE, GRANADA, LAND);
-   addLink(g, ALICANTE, MADRID, LAND);
-   addLink(g, ALICANTE, SARAGOSSA, LAND);
-   addLink(g, BARCELONA, SARAGOSSA, LAND);
-   addLink(g, BARCELONA, TOULOUSE, LAND);  
-   addLink(g, BORDEAUX, SARAGOSSA, LAND);
-   addLink(g, BORDEAUX, TOULOUSE, LAND); 
-   addLink(g, CADIZ, GRANADA, LAND);
-   addLink(g, CADIZ, LISBON, LAND);
-   addLink(g, CADIZ, MADRID, LAND);
-   addLink(g, GRANADA, MADRID, LAND);
-   addLink(g, LISBON, MADRID, LAND);
-   addLink(g, LISBON, SANTANDER, LAND);
-   addLink(g, MADRID, SANTANDER, LAND);
-   addLink(g, MADRID, SARAGOSSA, LAND); 
-   addLink(g, SANTANDER, SARAGOSSA, LAND);
-   addLink(g, SARAGOSSA, TOULOUSE, LAND); 
-  
-   addLink(g, ALICANTE, MEDITERRANEAN_SEA, SEA); 
-   addLink(g, ATLANTIC_OCEAN, BAY_OF_BISCAY, SEA);
-   addLink(g, ATLANTIC_OCEAN, CADIZ, SEA);
-   addLink(g, ATLANTIC_OCEAN, LISBON, SEA);
-   addLink(g, ATLANTIC_OCEAN, MEDITERRANEAN_SEA, SEA);
-   addLink(g, BARCELONA, MEDITERRANEAN_SEA, SEA); 
-   addLink(g, BAY_OF_BISCAY, BORDEAUX, SEA);
-   addLink(g, BAY_OF_BISCAY, SANTANDER, SEA);
 }
 
 //Useful for debugging
