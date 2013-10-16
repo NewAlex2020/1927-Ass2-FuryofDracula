@@ -37,7 +37,7 @@
 static void makePlaysArray(char *pastPlays, int n, char *array[LEN_PLAY+1]);
 static int playerIndex(char letter);
 static int locationIndex(char string[2]);
-static void pushCus(HunterView current, playerID player, LocationID location);
+static void pushCus(HunterView current, PlayerID player, LocationID location);
 
 
 struct hunterView {
@@ -158,7 +158,7 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
                     // TODO - location becomes the hospital
                     hunterView->score -= SCORE_LOSS_HUNTER_HOSPITAL;
                 }
-                if (hunterView->health[DRACULA] <= 0) {
+                if (hunterView->health[PLAYER_DRACULA] <= 0) {
                     // GAME OVER MATE
                 }
                 strIndex++;
@@ -327,7 +327,7 @@ LocationID getLocation(HunterView currentView, PlayerID player) {
 // 182 
 // then moved to the current location of 29
 void getHistory (HunterView currentView, PlayerID player,LocationID trail[TRAIL_SIZE]) {
-    int locations[] = currentView->locations[player];
+    int *locations = currentView->locations[player];
 
     int i;
     for (i=0; i<TRAIL_SIZE; i++) {
