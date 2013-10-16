@@ -50,6 +50,7 @@ static void pushCus(HunterView current, PlayerID player, LocationID location);
 static int isSeaLocation(LocationID location);
 static int playerIsDead(HunterView current, PlayerID player);
 static int scoreIsZero(HunterView current);
+static int draculaMeetsHunter(HunterView current);
 // isSeaLocation mainly used to see if Dracula is at sea
 
 
@@ -255,7 +256,18 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
                     if (playerIsDead(hunterView, PLAYER_DRACULA)) {
                         // game over
                     }
-                }
+                // TODO handle dracula walking into hunter(S!!!)
+                // if (currLocation != SEA_UNKNOWN &&
+                //     !isSeaLocation(currLocation)) {
+                //     PlayerID j;
+                //     for (j = 0; j < NUM_PLAYERS - 1; j++) {
+                //         if 
+                //     }
+
+                // }
+                // // } else if (draculaMeetsHunter(hunterView)) {
+                // //     // dracula encounters a hunter on his turn
+                // // }
                 if (hunterView->health[PLAYER_DRACULA] <= 0) {
                     hunterView->score -= SCORE_LOSS_DRACULA_TURN;
                 }
@@ -265,6 +277,8 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
 
     // we've gone through all the plays now. Time for some checking
     assert(numPlays - 1 == hunterView->currTurn);
+    // above will break if the game is over before all the
+    // plays have been processed
 
 
     // free random shit
@@ -499,6 +513,17 @@ static int playerIsDead(HunterView current, PlayerID player) {
 static int scoreIsZero(HunterView current) {
     if (current->score <= 0) {
         return TRUE;
+    }
+    return FALSE;
+}
+
+static int draculaMeetsHunter(HunterView current) {
+    int i;
+    const int draculaLoc = current->locations[PLAYER_DRACULA][0];
+    for (i = 0; i < NUM_PLAYERS - 1; i++) {
+        if (current->locations[i][0] == draculaLoc) {
+            return i;
+        }
     }
     return FALSE;
 }
