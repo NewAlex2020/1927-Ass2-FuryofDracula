@@ -169,7 +169,7 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
 
         pushCus(hunterView, currPlayer, currLocation);
         if (hunterView->health[currPlayer] == 0) {
-            hunterView->health[currPlayer] = 9;
+            hunterView->health[currPlayer] = GAME_START_HUNTER_LIFE_POINTS;
         }
         // could be wrong: what if they die this turn?
         
