@@ -44,7 +44,7 @@ struct hunterView {
     // Stuff it'll need.
     Graph *board; // Board representation.
     PlayerID currentTurn;
-    int score;   
+    int score;
     Round roundNum;
     // ===== We can do these three in the newHunterView func at creation
     // . Or jsut store the history String
@@ -57,7 +57,7 @@ struct hunterView {
     // the function getHealth, may not be.)
     // - array of player locations (inc. Drac).
     // - array of array's of player past 6 turn trails (inc. Drac)
-    int locations[NUM_PLAYERS][6];
+    int locations[NUM_PLAYERS][TRAIL_SIZE];
     // ** If we're doing everything iteratively, perhaps:
     int health[NUM_PLAYERS]; // initialise appropriately
     // some loop for parsing, assume i is the looping variable
@@ -237,6 +237,7 @@ int getScore(HunterView currentView) {
     // hunter teleported to hospital => -6 == - SCORE_LOSS_HUNTER_HOSPITAL
     // vampire matures (dracula's 'V' action)
     //     => -13 == - SCORE_LOSS_VAMPIRE_MATURES
+    return currentView->score;
 }
 
 //Get the current health points for a given player
@@ -259,6 +260,7 @@ int getHealth(HunterView currentView, PlayerID player) {
     // end turn in same city as their previous turn => +3hp == LIFE_GAIN_REST
     // hp capped at 9hp
     // check *****, not sure if it depends on who enters the city
+    return currentView->health[player];
 
 }
 
@@ -288,8 +290,7 @@ int getHealth(HunterView currentView, PlayerID player) {
 //   TELEPORT         if Dracula apparated back to Castle Dracula
 //   LOCATION_UNKNOWN if the round number is 0
 LocationID getLocation(HunterView currentView, PlayerID player) {
-
-
+    return currentView->locations[player][0];
 }   
 
 //Functions that return information about the history of the game
@@ -324,8 +325,12 @@ LocationID getLocation(HunterView currentView, PlayerID player) {
 // 182 
 // then moved to the current location of 29
 void getHistory (HunterView currentView, PlayerID player,LocationID trail[TRAIL_SIZE]) {
+    int locations[] = currentView->locations[player];
 
-
+    int i;
+    for (i=0; i<TRAIL_SIZE; i++) {
+        trail[i] = locations[i];
+    }
 }
 
 //Functions that query the map to find information about connectivit
