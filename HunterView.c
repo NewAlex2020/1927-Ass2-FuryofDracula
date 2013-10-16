@@ -37,7 +37,7 @@ static void makePlaysArray(char *pastPlays, int n, char *array[LEN_PLAY+1]);
 static int playerIndex(char letter);
 static int locationIndex(char string[2]);
 static void push(HunterView current);
-     
+
 
 struct hunterView {
     // OH GOD WE NEED TO WRITE THIS OH GOD, WE DON'T HAVE MUCH TIME.
@@ -131,6 +131,11 @@ HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
     for (currTurn = 0; currTurn < numPlays; currTurn++) {
         strcpy (currentPlay, playsArray[currTurn]);
         currPlayer = playerIndex(currentPlay[0]);
+
+        char locationString[3] = {currentPlay[1],currentPlay[2],'\0'}; 
+        LocationID currLocation = locationIndex(locationString);
+        push(hunterView, currPlayer, currLocation);
+
         int strIndex = 3; // start of the actions
         // each turn consists of moving location, then doing an action
 
