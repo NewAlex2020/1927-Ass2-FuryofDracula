@@ -52,9 +52,17 @@ void decideMove (HunterView gameState) {
 			registerBestPlay(currLoc, "screw switching, too hard");
 		}
 	} else if (currPlayer == PLAYER_VAN_HELSING) {
-		// todo
-	} else if (currPlayer == PLAYER_MINA_HARKER) {
-		// todo
+        // pick a random city by land
+        int * numLocations = malloc(sizeof(int));
+		LocationID options = connectedLocations(gameState, numLocations, getLocation(gameState, currPlayer), currPlayer, getRound(gameState), 1, 0, 0)
+        int randIndex = rand()/RAND_MAX * (*numLocations);
+        registerBestPlay(locationCodes[options[randIndex]], "who knows where I'll be")
+    } else if (currPlayer == PLAYER_MINA_HARKER) {
+		// pick a random city by land or sea
+        int * numLocations = malloc(sizeof(int));
+        LocationID options = connectedLocations(gameState, numLocations, getLocation(gameState, currPlayer), currPlayer, getRound(gameState), 1, 1, 0)
+        int randIndex = rand()/RAND_MAX * (*numLocations);
+        registerBestPlay(locationCodes[options[randIndex]], "who knows where I'll be")
 	} else {
 		assert ("This isn't Dracula's turn m8 uwot\n" == 42);
 	}
